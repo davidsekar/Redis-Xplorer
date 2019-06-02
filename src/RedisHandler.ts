@@ -18,7 +18,7 @@ class RedisHandler {
   }
 
   connect(redisHost?: string, port = 6379): Promise<Redis.Redis> {
-    return new Promise(resolve => {      
+    return new Promise(resolve => {
       this.redisClient = new Redis(redisHost, this.redisOptions);
 
       this.redisClient.connect(function () {
