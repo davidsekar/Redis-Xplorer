@@ -2,7 +2,7 @@ import * as vscode from "vscode";
 import { RedisProvider } from "./RedisProvider";
 import fs = require("fs");
 
-const redisDummyFile = ".vscode/.easyRedis.redis";
+const tempOutputFile = ".vscode/redis-vsexplorer.redis";
 
 enum ItemType {
   Server = 0,
@@ -15,8 +15,8 @@ interface Entry {
   type: ItemType;
 }
 
-export class RedisExplorer {
-  redisExplorer: vscode.TreeView<Entry>;
+export class RedisVsExplorer {
+  redisVsExplorer: vscode.TreeView<Entry>;
   treeDataProvider: RedisProvider;
   lastResource: any;
 
@@ -27,18 +27,18 @@ export class RedisExplorer {
     if (!fs.existsSync(`${vscode.workspace.rootPath}/.vscode`)) {
       fs.mkdirSync(`${vscode.workspace.rootPath}/.vscode`);
     }
-    fs.unlink(`${vscode.workspace.rootPath}/${redisDummyFile}`, err => {
+    fs.unlink(`${vscode.workspace.rootPath}/${tempOutputFile}`, err => {
       if (err) {
         console.log(err);
         return;
       }
     });
 
-    this.redisExplorer = vscode.window.createTreeView("redisExplorer", {
+    this.redisVsExplorer = vscode.window.createTreeView("redisVsExplorer", {
       treeDataProvider: this.treeDataProvider
     });
 
-    vscode.commands.registerCommand("redisExplorer.readData", resource => {
+    vscode.commands.registerCommand("redisVsExplorer.readData", resource => {
       this.lastResource = resource;
       // When refresh, it will execute getTreeItem in provider.
       return this.openResource(resource);
@@ -59,7 +59,7 @@ export class RedisExplorer {
       await vscode.workspace
         .getConfiguration()
         .update(
-          "easyRedis.address",
+          "redisVsExplorer.address",
           address,
           vscode.ConfigurationTarget.Global
         );
@@ -81,7 +81,7 @@ export class RedisExplorer {
         if (key !== "") {
           this.lastResource = { key };
           fs.writeFile(
-            `${vscode.workspace.rootPath}/${redisDummyFile}`,
+            `${vscode.workspace.rootPath}/${tempOutputFile}`,
             "",
             err => {
               if (err) {
@@ -90,7 +90,7 @@ export class RedisExplorer {
               }
               vscode.workspace
                 .openTextDocument(
-                  `${vscode.workspace.rootPath}/${redisDummyFile}`
+                  `${vscode.workspace.rootPath}/${tempOutputFile}`
                 )
                 .then(doc => {
                   vscode.window.showTextDocument(doc);
@@ -155,23 +155,50 @@ export class RedisExplorer {
     this.lastResource = undefined;
   }
 
-  private openResource(resource: any) {
+  private async openResource(resource: any) {
+    let vsCodeProgressOptions: vscode.ProgressOptions = {
+      location: vscode.ProgressLocation.Notification,
+      cancellable: false,
+      title: 'Redis Explorer'
+    };
+
+    vscode.window.withProgress(vsCodeProgressOptions, (progress, token) => {
+      progress.report({ message: 'Initiate', increment: 0 });
+      return new Promise(resolve => {
+        if (!resource)
+          this.writeToEditorCallback('No Data', progress, resolve);
+        else if (resource.value == '#server#') {
+          progress.report({ message: 'Connection info.', increment: 30 });
+          this.treeDataProvider.getServerNodeInfo().then(result => this.writeToEditorCallback(result, progress, resolve));
+        }
+        else {
+          progress.report({ message: 'Get value for `' + resource.value + '`', increment: 30 });
+          this.treeDataProvider.getNodeValue(resource.key).then(result => this.writeToEditorCallback(result, progress, resolve));
+        }
+      });
+    });
+  }
+
+  private writeToEditorCallback(result: string, progress: vscode.Progress<object>, resolve: any) {
+    progress.report({ message: 'Write to file', increment: 80 });
     fs.writeFile(
-      `${vscode.workspace.rootPath}/${redisDummyFile}`,
-      resource.type === "string"
-        ? resource.value
-        : JSON.stringify(resource.value, null, 2),
+      `${vscode.workspace.rootPath}/${tempOutputFile}`,
+      result,
       err => {
         if (err) {
           console.log(err);
           return;
         }
         vscode.workspace
-          .openTextDocument(`${vscode.workspace.rootPath}/${redisDummyFile}`)
+          .openTextDocument(`${vscode.workspace.rootPath}/${tempOutputFile}`)
           .then(doc => {
             vscode.window.showTextDocument(doc);
           });
       }
     );
+    progress.report({ message: 'Done', increment: 100 });
+    setTimeout(() => {
+      resolve();
+    }, 1000);
   }
 }

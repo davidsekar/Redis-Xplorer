@@ -1,33 +1,28 @@
-import { createClient, RedisClient } from "redis";
-import * as vscode from "vscode";
+import * as Redis from "ioredis";
 
 class RedisHandler {
-  private redisClient: any = undefined;
+  private redisClient!: Redis.Redis;
+  private redisOptions: Redis.RedisOptions;
 
-  constructor(redisHost?: string, port = 6379) {}
-
-  connect(redisHost?: string, port = 6379): Promise<RedisClient> {
-    return new Promise(resolve => {
-      const options = {
-        url: redisHost,
-        retry_strategy: (retry: any) => {
-          vscode.window.showInformationMessage(
-            `${
-              retry.error.code
-            } error occurs. Please check the address you just put in.`
-          );
-          resolve();
-          return new Error("Retry time exhausted");
+  constructor(redisHost?: string, port = 6379) {
+    this.redisOptions = {
+      retryStrategy: function (times) {
+        if (times < 3) {
+          return 200;
         }
-      };
-      this.redisClient = createClient(options);
-      this.redisClient.on("connect", () => {
-        console.log("Redis Connected!!!!!!!!!!!!!!!!!!!");
-        resolve();
-      });
+        return false;
+      },
+      lazyConnect: true,
+      maxRetriesPerRequest: 1
+    };
+  }
 
-      this.redisClient.on("error", (err: any) => {
-        console.log("Something went wrong " + err);
+  connect(redisHost?: string, port = 6379): Promise<Redis.Redis> {
+    return new Promise(resolve => {      
+      this.redisClient = new Redis(redisHost, this.redisOptions);
+
+      this.redisClient.connect(function () {
+        console.log("Redis Connected!!!!!!!!!!!!!!!!!!!");
         resolve();
       });
     });
@@ -35,12 +30,12 @@ class RedisHandler {
 
   disconnect(): void {
     if (this.redisClient) {
-      this.redisClient.end(false);
+      this.redisClient.disconnect();
     }
   }
 
   get isConnected(): Boolean {
-    if (this.redisClient && this.redisClient.connected) {
+    if (this.redisClient) {
       return true;
     }
     return false;

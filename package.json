@@ -1,12 +1,12 @@
 {
-  "name": "easy-redis",
-  "displayName": "easy-redis",
+  "name": "redis-vsexplorer",
+  "displayName": "Redis VsExplorer",
   "description": "To access redis easily",
-  "version": "1.0.11",
-  "publisher": "Youngki",
+  "version": "1.0.0",
+  "publisher": "Davidsekar",
   "author": {
-    "name": "Youngki Kang",
-    "email": "yellowgg2@gmail.com"
+    "name": "David Gnanasekaran",
+    "email": "c.davidgnanasekaran@gmail.com"
   },
   "icon": "images/redis.png",
   "engines": {
@@ -16,7 +16,7 @@
     "Other"
   ],
   "activationEvents": [
-    "onView:redisExplorer",
+    "onView:redisVsExplorer",
     "onCommand:config.commands.redisServer"
   ],
   "main": "./out/extension",
@@ -25,7 +25,7 @@
       {
         "title": "Easy Redis Configuration",
         "properties": {
-          "easyRedis.address": {
+          "redisVsExplorer.address": {
             "type": "string",
             "description": "Redis Server Address: Where redis client connect to"
           }
@@ -35,7 +35,7 @@
     "views": {
       "explorer": [
         {
-          "id": "redisExplorer",
+          "id": "redisVsExplorer",
           "name": "Redis Explorer"
         }
       ]
@@ -44,19 +44,19 @@
       "view/title": [
         {
           "command": "config.commands.redisServer.delAllItems",
-          "when": "view == redisExplorer",
+          "when": "view == redisVsExplorer",
           "group": "navigation"
         },
         {
           "command": "config.commands.redisServer.addItem",
-          "when": "view == redisExplorer",
+          "when": "view == redisVsExplorer",
           "group": "navigation"
         }
       ],
       "view/item/context": [
         {
           "command": "config.commands.redisServer.delItem",
-          "when": "view == redisExplorer && viewItem == redisNode",
+          "when": "view == redisVsExplorer && viewItem == redisNode",
           "group": "inline"
         }
       ]
@@ -64,7 +64,7 @@
     "commands": [
       {
         "command": "config.commands.redisServer",
-        "title": "EasyRedis: Add new redis server address"
+        "title": "Redis-VsExplorer: Add new redis server address"
       },
       {
         "command": "config.commands.redisServer.delAllItems",
@@ -101,11 +101,11 @@
     "publish": "vsce package && vsce publish"
   },
   "devDependencies": {
-    "typescript": "^3.1.4",
-    "vscode": "^1.1.34",
-    "tslint": "^5.17.0",
+    "@types/mocha": "^2.2.42",
     "@types/node": "^8.10.25",
-    "@types/mocha": "^2.2.42"
+    "tslint": "^5.17.0",
+    "typescript": "^3.1.4",
+    "vscode": "^1.1.34"
   },
   "dependencies": {
     "ioredis": "^4.9.5"
