@@ -1,5 +1,5 @@
 {
-  "name": "redis-vsexplorer",
+  "name": "redis-xplorer",
   "displayName": "Redis Xplorer",
   "description": "To access redis easily",
   "version": "1.0.0",
@@ -64,7 +64,7 @@
     "commands": [
       {
         "command": "config.commands.redisServer",
-        "title": "Redis-VsExplorer: Add new redis server address"
+        "title": "Redis Xplorer: Add new redis server address"
       },
       {
         "command": "config.commands.redisServer.delAllItems",
@@ -101,6 +101,7 @@
     "publish": "vsce package && vsce publish"
   },
   "devDependencies": {
+    "@types/ioredis": "^4.0.11",
     "@types/mocha": "^2.2.42",
     "@types/node": "^8.10.25",
     "tslint": "^5.17.0",
@@ -112,8 +113,8 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/davidsekar/Redis-VsExplorer"
+    "url": "https://github.com/davidsekar/Redis-Xplorer"
   },
-  "homepage": "https://github.com/davidsekar/Redis-VsExplorer/blob/master/README.md",
+  "homepage": "https://github.com/davidsekar/Redis-Xplorer/blob/master/README.md",
   "license": "MIT"
 }

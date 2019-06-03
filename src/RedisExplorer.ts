@@ -2,7 +2,7 @@ import * as vscode from "vscode";
 import { RedisProvider } from "./RedisProvider";
 import fs = require("fs");
 
-const tempOutputFile = ".vscode/redis-vsexplorer.redis";
+const tempOutputFile = ".vscode/redis-xplorer.redis";
 
 enum ItemType {
   Server = 0,
