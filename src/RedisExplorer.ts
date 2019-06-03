@@ -15,8 +15,8 @@ interface Entry {
   type: ItemType;
 }
 
-export class RedisVsExplorer {
-  redisVsExplorer: vscode.TreeView<Entry>;
+export class RedisXplorer {
+  redisXplorer: vscode.TreeView<Entry>;
   treeDataProvider: RedisProvider;
   lastResource: any;
 
@@ -34,11 +34,11 @@ export class RedisVsExplorer {
       }
     });
 
-    this.redisVsExplorer = vscode.window.createTreeView("redisVsExplorer", {
+    this.redisXplorer = vscode.window.createTreeView("redisXplorer", {
       treeDataProvider: this.treeDataProvider
     });
 
-    vscode.commands.registerCommand("redisVsExplorer.readData", resource => {
+    vscode.commands.registerCommand("redisXplorer.readData", resource => {
       this.lastResource = resource;
       // When refresh, it will execute getTreeItem in provider.
       return this.openResource(resource);
@@ -59,7 +59,7 @@ export class RedisVsExplorer {
       await vscode.workspace
         .getConfiguration()
         .update(
-          "redisVsExplorer.address",
+          "redisXplorer.address",
           address,
           vscode.ConfigurationTarget.Global
         );

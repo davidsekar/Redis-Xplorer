@@ -1,6 +1,6 @@
 {
   "name": "redis-vsexplorer",
-  "displayName": "Redis VsExplorer",
+  "displayName": "Redis Xplorer",
   "description": "To access redis easily",
   "version": "1.0.0",
   "publisher": "Davidsekar",
@@ -16,7 +16,7 @@
     "Other"
   ],
   "activationEvents": [
-    "onView:redisVsExplorer",
+    "onView:redisXplorer",
     "onCommand:config.commands.redisServer"
   ],
   "main": "./out/extension",
@@ -25,7 +25,7 @@
       {
         "title": "Easy Redis Configuration",
         "properties": {
-          "redisVsExplorer.address": {
+          "redisXplorer.address": {
             "type": "string",
             "description": "Redis Server Address: Where redis client connect to"
           }
@@ -35,7 +35,7 @@
     "views": {
       "explorer": [
         {
-          "id": "redisVsExplorer",
+          "id": "redisXplorer",
           "name": "Redis Explorer"
         }
       ]
@@ -44,19 +44,19 @@
       "view/title": [
         {
           "command": "config.commands.redisServer.delAllItems",
-          "when": "view == redisVsExplorer",
+          "when": "view == redisXplorer",
           "group": "navigation"
         },
         {
           "command": "config.commands.redisServer.addItem",
-          "when": "view == redisVsExplorer",
+          "when": "view == redisXplorer",
           "group": "navigation"
         }
       ],
       "view/item/context": [
         {
           "command": "config.commands.redisServer.delItem",
-          "when": "view == redisVsExplorer && viewItem == redisNode",
+          "when": "view == redisXplorer && viewItem == redisNode",
           "group": "inline"
         }
       ]
