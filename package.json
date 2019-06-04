@@ -23,7 +23,7 @@
   "contributes": {
     "configuration": [
       {
-        "title": "Easy Redis Configuration",
+        "title": "Redis Xplorer Configuration",
         "properties": {
           "redisXplorer.address": {
             "type": "string",
