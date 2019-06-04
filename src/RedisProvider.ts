@@ -36,7 +36,7 @@ export class RedisProvider implements vscode.TreeDataProvider<Entry> {
   }
 
   public async getNodeValue(key: string): Promise<string> {
-    return JSON.stringify(await this.redisHandler.getValue(key));
+    return await this.redisHandler.getValue(key);
   }
 
   async connectRedis() {
@@ -45,7 +45,7 @@ export class RedisProvider implements vscode.TreeDataProvider<Entry> {
     if (configuration.redisXplorer.address !== "") {
       console.log("Redis connect to : ", configuration.redisXplorer.address);
       this.redisHandler
-        .connect(configuration.redisXplorer.address, 6379)
+        .connect(configuration.redisXplorer.address)
         .then(() => {
           this.refresh();
         });

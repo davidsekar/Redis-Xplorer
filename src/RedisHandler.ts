@@ -4,7 +4,7 @@ class RedisHandler {
   private redisClient!: Redis.Redis;
   private redisOptions: Redis.RedisOptions;
 
-  constructor(redisHost?: string, port = 6379) {
+  constructor() {
     this.redisOptions = {
       retryStrategy: function (times) {
         if (times < 3) {
@@ -17,7 +17,7 @@ class RedisHandler {
     };
   }
 
-  connect(redisHost?: string, port = 6379): Promise<Redis.Redis> {
+  connect(redisHost?: string): Promise<Redis.Redis> {
     return new Promise(resolve => {
       this.redisClient = new Redis(redisHost, this.redisOptions);
 
@@ -75,7 +75,7 @@ class RedisHandler {
         }
         resolve(result.sort());
       });
-    }).catch(e => {
+    }).catch(() => {
       return [];
     });
   }
@@ -87,11 +87,11 @@ class RedisHandler {
       this.redisClient.info((error: any, result: any) => {
         if (error) {
           reject();
-          return "";
+          return;
         }
         resolve(result);
       });
-    }).catch(e => {
+    }).catch(() => {
       return "";
     });
   }

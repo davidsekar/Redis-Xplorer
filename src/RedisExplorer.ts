@@ -20,7 +20,7 @@ export class RedisXplorer {
   treeDataProvider: RedisProvider;
   lastResource: any;
 
-  constructor(context: vscode.ExtensionContext) {
+  constructor() {
     this.treeDataProvider = new RedisProvider();
     this.lastResource = undefined;
 
@@ -61,13 +61,13 @@ export class RedisXplorer {
         .update(
           "redisXplorer.address",
           address,
-          vscode.ConfigurationTarget.Global
+          vscode.ConfigurationTarget.Workspace
         );
 
       this.reconnectRedis();
     });
 
-    vscode.workspace.onDidChangeConfiguration(event => {
+    vscode.workspace.onDidChangeConfiguration(() => {
       this.reconnectRedis();
     });
 
@@ -133,17 +133,12 @@ export class RedisXplorer {
       if (extension[extension.length - 1] !== "redis") return;
       if (!this.lastResource.key) return;
 
-      fs.readFile(event.fileName, (err, data) => {
-        this.treeDataProvider.deleteRedis(this.lastResource.key);
-        try {
-          const readData = JSON.parse(data.toString());
-          this.treeDataProvider.setRedisObject(this.lastResource.key, readData);
-        } catch (e) {
-          this.treeDataProvider.setRedisValue(
-            this.lastResource.key,
-            data.toString()
-          );
+      fs.readFile(event.fileName, 'utf8', (err, data) => {
+        if (err) {
+          console.debug(err.message);
+          return;
         }
+        this.treeDataProvider.setRedisValue(this.lastResource.key, data);
         this.treeDataProvider.refresh();
       });
     });
@@ -159,10 +154,10 @@ export class RedisXplorer {
     let vsCodeProgressOptions: vscode.ProgressOptions = {
       location: vscode.ProgressLocation.Notification,
       cancellable: false,
-      title: 'Redis Explorer'
+      title: 'Redis Xplorer'
     };
 
-    vscode.window.withProgress(vsCodeProgressOptions, (progress, token) => {
+    vscode.window.withProgress(vsCodeProgressOptions, (progress) => {
       progress.report({ message: 'Initiate', increment: 0 });
       return new Promise(resolve => {
         if (!resource)
