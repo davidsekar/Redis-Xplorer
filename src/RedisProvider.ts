@@ -1,6 +1,7 @@
 import * as vscode from "vscode";
 import RedisHandler from "./RedisHandler";
 import * as path from "path";
+import { XplorerProfiles, XplorerConfig } from "./model";
 
 enum ItemType {
   Server = 0,
@@ -27,7 +28,6 @@ export class RedisProvider implements vscode.TreeDataProvider<Entry> {
   }
 
   public refresh() {
-    console.log("Refresh Fire!!!!");
     this._onDidChangeTreeData.fire();
   }
 
@@ -41,11 +41,13 @@ export class RedisProvider implements vscode.TreeDataProvider<Entry> {
 
   async connectRedis() {
     const configuration = vscode.workspace.getConfiguration();
-
-    if (configuration.redisXplorer.address !== "") {
-      console.log("Redis connect to : ", configuration.redisXplorer.address);
+    let xconfig : XplorerConfig = configuration.redisXplorer.config;
+    if (xconfig && xconfig.profiles.length > 0) {
+      let connectProfile: XplorerProfiles = xconfig.profiles[0];
+      console.log("Redis connect to : ", connectProfile.host);
+      let url = "redis://:" + connectProfile.accessKey + "@" + connectProfile.host;
       this.redisHandler
-        .connect(configuration.redisXplorer.address)
+        .connect(url)
         .then(() => {
           this.refresh();
         });
@@ -122,7 +124,8 @@ export class RedisProvider implements vscode.TreeDataProvider<Entry> {
   async getChildren(element: Entry | undefined): Promise<Entry[]> {
     if (!element) {
       const configuration = vscode.workspace.getConfiguration();
-      return [{ key: configuration.redisXplorer.address, type: ItemType.Server }];
+      let xconfig: XplorerConfig = configuration.redisXplorer.config;
+      return [{ key: xconfig.profiles[0].name, type: ItemType.Server }];
     } else if (element.type === ItemType.Server) {
       try {
         const result = await this.redisHandler.getKeys();

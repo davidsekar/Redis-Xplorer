@@ -22,7 +22,6 @@ class RedisHandler {
       this.redisClient = new Redis(redisHost, this.redisOptions);
 
       this.redisClient.connect(function () {
-        console.log("Redis Connected!!!!!!!!!!!!!!!!!!!");
         resolve();
       });
     });

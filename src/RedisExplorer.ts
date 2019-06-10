@@ -1,6 +1,9 @@
 import * as vscode from "vscode";
 import { RedisProvider } from "./RedisProvider";
 import fs = require("fs");
+import { XplorerConfig, XplorerProfiles } from "./model";
+import { isNil } from "lodash";
+
 
 const tempOutputFile = ".vscode/redis-xplorer.redis";
 
@@ -21,23 +24,23 @@ export class RedisXplorer {
   lastResource: any;
 
   constructor() {
+    if (!isNil(vscode.workspace.rootPath)) {
+      // Create if default folder is missing
+      let vsCodeFolder = `${vscode.workspace.rootPath}/.vscode`;
+      if (!fs.existsSync(vsCodeFolder)) { fs.mkdirSync(vsCodeFolder); }
+
+      // Delete old temporary file
+      fs.unlink(`${vscode.workspace.rootPath}/${tempOutputFile}`, err => { if (err) { console.log(err); return; } });
+    }
+
     this.treeDataProvider = new RedisProvider();
     this.lastResource = undefined;
+    this.redisXplorer = vscode.window.createTreeView("redisXplorer", { treeDataProvider: this.treeDataProvider });
 
-    if (!fs.existsSync(`${vscode.workspace.rootPath}/.vscode`)) {
-      fs.mkdirSync(`${vscode.workspace.rootPath}/.vscode`);
-    }
-    fs.unlink(`${vscode.workspace.rootPath}/${tempOutputFile}`, err => {
-      if (err) {
-        console.log(err);
-        return;
-      }
-    });
+    this.registerVsCommands();
+  }
 
-    this.redisXplorer = vscode.window.createTreeView("redisXplorer", {
-      treeDataProvider: this.treeDataProvider
-    });
-
+  private registerVsCommands() {
     vscode.commands.registerCommand("redisXplorer.readData", resource => {
       this.lastResource = resource;
       // When refresh, it will execute getTreeItem in provider.
@@ -45,22 +48,46 @@ export class RedisXplorer {
     });
 
     vscode.commands.registerCommand("config.commands.redisServer", async () => {
-      const address = await vscode.window.showInputBox({
-        prompt: "Provide Redis Server address "
-      });
-
-      if (address === "") {
-        vscode.window.showInformationMessage(
-          "Please put a correct Redis Server address "
-        );
+      let inputOptions: vscode.InputBoxOptions = {
+        ignoreFocusOut: true,
+        prompt: "Display Name",
+        placeHolder: "enter a nick name"
+      };
+      let profileName = await vscode.window.showInputBox(inputOptions);
+      if (isNil(profileName) || profileName === '') {
+        vscode.window.showInformationMessage("Please provide a display name");
         return;
       }
+
+      inputOptions.prompt = "Host server";
+      inputOptions.placeHolder = "server.redis.cache.windows.net";
+
+      let hostName = await vscode.window.showInputBox(inputOptions);
+      if (isNil(hostName) || hostName === "") {
+        vscode.window.showInformationMessage("Please provide Redis host server name");
+        return;
+      }
+
+      inputOptions.prompt = "Password";
+      inputOptions.placeHolder = "url-safe / hashed password";
+
+      const password = await vscode.window.showInputBox(inputOptions);
+      if (isNil(password) || password === "") {
+        vscode.window.showInformationMessage("Please provide Redis password");
+        return;
+      }
+
+      let xconfig = new XplorerConfig();
+      xconfig.profiles = [];
+
+      let profile = new XplorerProfiles(profileName, hostName, password);
+      xconfig.profiles.push(profile);
 
       await vscode.workspace
         .getConfiguration()
         .update(
-          "redisXplorer.address",
-          address,
+          "redisXplorer.config",
+          xconfig,
           vscode.ConfigurationTarget.Workspace
         );
 
