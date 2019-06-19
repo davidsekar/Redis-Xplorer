@@ -101,16 +101,16 @@
     "publish": "vsce package && vsce publish"
   },
   "devDependencies": {
-    "@types/ioredis": "^4.0.11",
+    "@types/ioredis": "^4.0.12",
     "@types/lodash": "^4.14.134",
     "@types/mocha": "^2.2.42",
     "@types/node": "^8.10.25",
     "tslint": "^5.17.0",
-    "typescript": "^3.1.4",
+    "typescript": "^3.5.2",
     "vscode": "^1.1.34"
   },
   "dependencies": {
-    "ioredis": "^4.9.5",
+    "ioredis": "^4.10.0",
     "lodash": "^4.17.11"
   },
   "repository": {

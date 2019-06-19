@@ -1,21 +1,11 @@
 import * as vscode from "vscode";
 import RedisHandler from "./RedisHandler";
 import * as path from "path";
-import { XplorerProfiles, XplorerConfig } from "./model";
-
-enum ItemType {
-  Server = 0,
-  Item = 1,
-  ItemSelected = 2
-}
-
-interface Entry {
-  key: string;
-  type: ItemType;
-}
+import { XplorerProfiles, XplorerConfig, Entry, ItemType } from "./model";
+import { isNil, find } from "lodash";
 
 export class RedisProvider implements vscode.TreeDataProvider<Entry> {
-  private redisHandler: RedisHandler;
+  private redisHandler: { [key: string]: RedisHandler };
   private _onDidChangeTreeData: vscode.EventEmitter<
     any
   > = new vscode.EventEmitter<any>();
@@ -23,39 +13,34 @@ export class RedisProvider implements vscode.TreeDataProvider<Entry> {
     .event;
 
   constructor() {
-    this.redisHandler = new RedisHandler();
-    this.connectRedis();
+    this.redisHandler = {};
   }
 
   public refresh() {
     this._onDidChangeTreeData.fire();
   }
 
-  public async getServerNodeInfo(): Promise<string> {
-    return await this.redisHandler.getInfo();
+  public async getServerNodeInfo(connKey: string): Promise<string> {
+    return await this.getRedisHandler(connKey).getInfo();
   }
 
-  public async getNodeValue(key: string): Promise<string> {
-    return await this.redisHandler.getValue(key);
+  public async getNodeValue(key: string, connKey: string): Promise<string> {
+    return await this.getRedisHandler(connKey).getValue(key);
   }
 
-  async connectRedis() {
+  async connectRedis(connKey: string) {
     const configuration = vscode.workspace.getConfiguration();
-    let xconfig : XplorerConfig = configuration.redisXplorer.config;
+    let xconfig: XplorerConfig = configuration.redisXplorer.config;
     if (xconfig && xconfig.profiles.length > 0) {
       let connectProfile: XplorerProfiles = xconfig.profiles[0];
       console.log("Redis connect to : ", connectProfile.host);
       let url = "redis://:" + connectProfile.accessKey + "@" + connectProfile.host;
-      this.redisHandler
-        .connect(url)
-        .then(() => {
-          this.refresh();
-        });
+      this.getRedisHandler(connKey).connect(url).then(() => { this.refresh(); });
     }
   }
 
-  disconnectRedis() {
-    this.redisHandler.disconnect();
+  disconnectRedis(connKey: string) {
+    this.getRedisHandler(connKey).disconnect();
   }
 
   async getTreeItem(element: Entry): Promise<vscode.TreeItem> {
@@ -70,14 +55,18 @@ export class RedisProvider implements vscode.TreeDataProvider<Entry> {
         : vscode.TreeItemCollapsibleState.None
     );
 
-    let result;
+    let result = new Entry();
+    result.key = element.key;
     if (element.type === ItemType.Server) {
-      // result = await this.redisHandler.getInfo();
-      result = '#server#';
+      result.value = '#server#';
+      result.serverName = element.key;
     } else {
-      // result = await this.redisHandler.getValue(element.key);
-      result = element.key;
+      result.value = element.key;
+      result.serverName = element.serverName;
     }
+
+    result.dataType = typeof result.value;
+    result.iconType = element.iconType;
 
     treeItem.iconPath = {
       light: path.join(
@@ -105,14 +94,7 @@ export class RedisProvider implements vscode.TreeDataProvider<Entry> {
     treeItem.command = {
       command: "redisXplorer.readData",
       title: "Read Data",
-      arguments: [
-        {
-          key: element.key,
-          value: result,
-          type: typeof result,
-          iconType: element.type
-        }
-      ]
+      arguments: [result]
     };
 
     if (element.type !== ItemType.Server) {
@@ -122,37 +104,76 @@ export class RedisProvider implements vscode.TreeDataProvider<Entry> {
   }
 
   async getChildren(element: Entry | undefined): Promise<Entry[]> {
+    let children: Entry[] = [];
     if (!element) {
       const configuration = vscode.workspace.getConfiguration();
       let xconfig: XplorerConfig = configuration.redisXplorer.config;
-      return [{ key: xconfig.profiles[0].name, type: ItemType.Server }];
+      if (xconfig.profiles && xconfig.profiles.length > 0) {
+        xconfig.profiles.forEach((curValue) => {
+          let node = new Entry();
+          node.key = curValue.name;
+          node.type = ItemType.Server;
+          node.iconType = ItemType.Server;
+          node.serverName = curValue.name;
+          node.value = 'redis://:' + curValue.accessKey + '@' + curValue.host;
+          node.dataType = typeof node.value;
+          children.push(node);
+        });
+      }
+      return children;
     } else if (element.type === ItemType.Server) {
       try {
-        const result = await this.redisHandler.getKeys();
+        const result = await this.getRedisHandler(element.serverName).getKeys();
         return result.map((value: string) => {
-          return { key: value, type: ItemType.Item };
+          let node = new Entry();
+          node.key = value;
+          node.type = ItemType.Item;
+          node.iconType = ItemType.Item;
+          node.serverName = element.serverName;
+          node.value = '';
+          node.dataType = typeof node.value;
+          return node;
         });
       } catch (e) {
-        return [];
+        return children;
       }
     }
 
-    return [];
+    return children;
   }
 
-  setRedisValue(key: string, value: string) {
-    this.redisHandler.setValue(key, value);
+  setRedisValue(key: string, value: string, connKey: string) {
+    this.getRedisHandler(connKey).setValue(key, value);
   }
 
-  setRedisObject(key: string, value: any) {
-    this.redisHandler.setObject(key, value);
+  setRedisObject(key: string, value: any, connKey: string) {
+    this.getRedisHandler(connKey).setObject(key, value);
   }
 
-  deleteRedis(key: string) {
-    this.redisHandler.delete(key);
+  deleteRedis(key: string, connKey: string) {
+    this.getRedisHandler(connKey).delete(key);
   }
 
-  flushAll() {
-    this.redisHandler.flushAll();
+  flushAll(connKey: string) {
+    this.getRedisHandler(connKey).flushAll();
+  }
+
+  getRedisHandler(connKey: string): RedisHandler {
+    if (isNil(this.redisHandler[connKey])) {
+      this.redisHandler[connKey] = new RedisHandler();
+      const configuration = vscode.workspace.getConfiguration();
+      let xconfig: XplorerConfig = configuration.redisXplorer.config;
+      if (xconfig && xconfig.profiles.length > 0) {
+        let connectProfile: XplorerProfiles | undefined = find(xconfig.profiles, (o) => {
+          return o.name === connKey;
+        });
+        if (connectProfile) {
+          console.log("Redis connect to : ", connectProfile.host);
+          let url = "redis://:" + connectProfile.accessKey + "@" + connectProfile.host;
+          this.redisHandler[connKey].connect(url).then(() => { this.refresh(); });
+        }
+      }
+    }
+    return this.redisHandler[connKey];
   }
 }
