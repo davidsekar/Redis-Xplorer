@@ -2,7 +2,7 @@
   "name": "redis-xplorer",
   "displayName": "Redis Xplorer",
   "description": "To access redis easily",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "publisher": "Davidsekar",
   "author": {
     "name": "David Gnanasekaran",
@@ -21,23 +21,28 @@
   ],
   "main": "./out/extension",
   "contributes": {
-    "configuration": [{
-      "title": "Redis Xplorer Configuration",
-      "properties": {
-        "redisXplorer.config": {
-          "type": "string",
-          "description": "Redis Server Address: Where redis client connect to"
+    "configuration": [
+      {
+        "title": "Redis Xplorer Configuration",
+        "properties": {
+          "redisXplorer.config": {
+            "type": "string",
+            "description": "Redis Server Address: Where redis client connect to"
+          }
         }
       }
-    }],
+    ],
     "views": {
-      "explorer": [{
-        "id": "redisXplorer",
-        "name": "Redis Xplorer"
-      }]
+      "explorer": [
+        {
+          "id": "redisXplorer",
+          "name": "Redis Xplorer"
+        }
+      ]
     },
     "menus": {
-      "view/item/context": [{
+      "view/item/context": [
+        {
           "command": "config.commands.redisServer.delItem",
           "when": "view == redisXplorer && viewItem == redisNode",
           "group": "inline"
@@ -59,7 +64,8 @@
         }
       ]
     },
-    "commands": [{
+    "commands": [
+      {
         "command": "config.commands.redisServer",
         "title": "Redis Xplorer: Add new redis server address"
       },
