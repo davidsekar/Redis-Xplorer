@@ -1,16 +1,17 @@
 import * as vscode from "vscode";
-import { isNil, isEmpty } from "lodash";
+import { isNil, isEmpty, remove } from "lodash";
 import { writeFile, existsSync, mkdirSync, unlink, readFile } from "fs";
 
 import { XplorerConfig, XplorerProfiles, Entry } from "./model";
 import { RedisProvider } from "./RedisProvider";
 
 const tempOutputFile = ".vscode/redis-xplorer.redis";
+const commandOk = "OK";
 
 export class RedisXplorer {
   redisXplorer: vscode.TreeView<Entry>;
   treeDataProvider: RedisProvider;
-  lastResource!: Entry;
+  lastAccessedNode!: Entry;
   xconfig!: XplorerConfig;
 
   constructor() {
@@ -51,7 +52,7 @@ export class RedisXplorer {
    */
   private setupVsCommands() {
     vscode.commands.registerCommand("redisXplorer.readData", (resource: Entry) => {
-      this.lastResource = resource;
+      this.lastAccessedNode = resource;
       // When refresh, it will execute getTreeItem in provider.
       return this.openResource(resource);
     });
@@ -96,18 +97,21 @@ export class RedisXplorer {
           this.xconfig,
           vscode.ConfigurationTarget.Workspace
         );
+
+      this.treeDataProvider.refresh();
     });
 
     vscode.workspace.onDidChangeConfiguration(() => { this.reconnectRedis(); });
 
-    vscode.commands.registerCommand("config.commands.redisServer.addItem", async () => {
+    vscode.commands.registerCommand("config.commands.redisServer.addItem", async (node: Entry) => {
       const key = await vscode.window.showInputBox({
         prompt: "Provide a new key "
       });
 
       if (key !== "") {
-        this.lastResource = new Entry();
-        this.lastResource.key = key || '';
+        this.lastAccessedNode = node;
+        this.lastAccessedNode.key = key || 'dummy';
+
         writeFile(
           `${vscode.workspace.rootPath}/${tempOutputFile}`,
           "",
@@ -116,10 +120,7 @@ export class RedisXplorer {
               console.log(err);
               return;
             }
-            vscode.workspace
-              .openTextDocument(
-                `${vscode.workspace.rootPath}/${tempOutputFile}`
-              )
+            vscode.workspace.openTextDocument(`${vscode.workspace.rootPath}/${tempOutputFile}`)
               .then(doc => {
                 vscode.window.showTextDocument(doc);
               });
@@ -132,6 +133,29 @@ export class RedisXplorer {
       if (node) {
         this.treeDataProvider.deleteRedis(node.key, node.serverName);
         this.treeDataProvider.refresh();
+      }
+    },
+      this // To use parameter in callback function, you must pass 'this'
+    );
+
+    vscode.commands.registerCommand("config.commands.redisServer.delServerItem", async (node: Entry) => {
+      const canDelete = await vscode.window.showWarningMessage("Do you really want to delete \"" + node.serverName + "\" profile ?",
+        { modal: true, }, commandOk);
+
+      if (canDelete === commandOk && node) {
+        const configuration = vscode.workspace.getConfiguration();
+        this.xconfig = configuration.redisXplorer.config;
+        if (this.xconfig && !isEmpty(this.xconfig.profiles)) {
+          remove(this.xconfig.profiles, (p) => {
+            return p.name === node.serverName;
+          });
+          this.saveXplorerConfig(this.xconfig).then(() => {
+            console.log('Selected profile was removed successfully!');
+          });
+
+          this.treeDataProvider.disconnectRedis(node.serverName);
+          this.treeDataProvider.refresh();
+        }
       }
     },
       this // To use parameter in callback function, you must pass 'this'
@@ -153,14 +177,14 @@ export class RedisXplorer {
     vscode.workspace.onDidSaveTextDocument(event => {
       const extension = event.fileName.split(".");
       if (extension[extension.length - 1] !== "redis") return;
-      if (!this.lastResource.key) return;
+      if (!this.lastAccessedNode.key) return;
 
       readFile(event.fileName, 'utf8', (err, data) => {
         if (err) {
           console.debug(err.message);
           return;
         }
-        this.treeDataProvider.setRedisValue(this.lastResource.key, data, this.lastResource.serverName);
+        this.treeDataProvider.setRedisValue(this.lastAccessedNode.key, data, this.lastAccessedNode.serverName);
         this.treeDataProvider.refresh();
       });
     });

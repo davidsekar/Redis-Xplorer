@@ -21,54 +21,51 @@
   ],
   "main": "./out/extension",
   "contributes": {
-    "configuration": [
-      {
-        "title": "Redis Xplorer Configuration",
-        "properties": {
-          "redisXplorer.config": {
-            "type": "string",
-            "description": "Redis Server Address: Where redis client connect to"
-          }
+    "configuration": [{
+      "title": "Redis Xplorer Configuration",
+      "properties": {
+        "redisXplorer.config": {
+          "type": "string",
+          "description": "Redis Server Address: Where redis client connect to"
         }
       }
-    ],
+    }],
     "views": {
-      "explorer": [
-        {
-          "id": "redisXplorer",
-          "name": "Redis Xplorer"
-        }
-      ]
+      "explorer": [{
+        "id": "redisXplorer",
+        "name": "Redis Xplorer"
+      }]
     },
     "menus": {
-      "view/title": [
-        {
-          "command": "config.commands.redisServer.delAllItems",
-          "when": "view == redisXplorer",
-          "group": "navigation"
+      "view/item/context": [{
+          "command": "config.commands.redisServer.delItem",
+          "when": "view == redisXplorer && viewItem == redisNode",
+          "group": "inline"
         },
         {
           "command": "config.commands.redisServer.addItem",
-          "when": "view == redisXplorer",
-          "group": "navigation"
-        }
-      ],
-      "view/item/context": [
+          "when": "view == redisXplorer && viewItem == redisServerNode",
+          "group": "inline"
+        },
         {
-          "command": "config.commands.redisServer.delItem",
-          "when": "view == redisXplorer && viewItem == redisNode",
+          "command": "config.commands.redisServer.delServerItem",
+          "when": "view == redisXplorer && viewItem == redisServerNode",
+          "group": "inline"
+        },
+        {
+          "command": "config.commands.redisServer.delAllItems",
+          "when": "view == redisXplorer && viewItem == redisServerNode",
           "group": "inline"
         }
       ]
     },
-    "commands": [
-      {
+    "commands": [{
         "command": "config.commands.redisServer",
         "title": "Redis Xplorer: Add new redis server address"
       },
       {
         "command": "config.commands.redisServer.delAllItems",
-        "title": "Flush REDIS",
+        "title": "(WARN) Flush entire REDIS",
         "icon": {
           "light": "resources/light/baseline_layers_clear_black_18dp.png",
           "dark": "resources/dark/baseline_layers_clear_white_18dp.png"
@@ -76,7 +73,15 @@
       },
       {
         "command": "config.commands.redisServer.delItem",
-        "title": "Delete Item",
+        "title": "Delete this redis item",
+        "icon": {
+          "light": "resources/light/baseline_remove_black_18dp.png",
+          "dark": "resources/dark/baseline_remove_white_18dp.png"
+        }
+      },
+      {
+        "command": "config.commands.redisServer.delServerItem",
+        "title": "Delete this connection profile",
         "icon": {
           "light": "resources/light/baseline_remove_black_18dp.png",
           "dark": "resources/dark/baseline_remove_white_18dp.png"
@@ -84,7 +89,7 @@
       },
       {
         "command": "config.commands.redisServer.addItem",
-        "title": "Add Item",
+        "title": "Add Redis Item",
         "icon": {
           "light": "resources/light/baseline_add_black_18dp.png",
           "dark": "resources/dark/baseline_add_white_18dp.png"

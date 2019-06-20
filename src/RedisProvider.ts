@@ -2,7 +2,7 @@ import * as vscode from "vscode";
 import RedisHandler from "./RedisHandler";
 import * as path from "path";
 import { XplorerProfiles, XplorerConfig, Entry, ItemType } from "./model";
-import { isNil, find } from "lodash";
+import { isNil, find, unset } from "lodash";
 
 export class RedisProvider implements vscode.TreeDataProvider<Entry> {
   private redisHandler: { [key: string]: RedisHandler };
@@ -28,6 +28,11 @@ export class RedisProvider implements vscode.TreeDataProvider<Entry> {
     return await this.getRedisHandler(connKey).getValue(key);
   }
 
+  public disconnectRedis(connKey: string) {
+    this.getRedisHandler(connKey).disconnect();
+    unset(this.redisHandler, connKey);
+  }
+
   async connectRedis(connKey: string) {
     const configuration = vscode.workspace.getConfiguration();
     let xconfig: XplorerConfig = configuration.redisXplorer.config;
@@ -37,10 +42,6 @@ export class RedisProvider implements vscode.TreeDataProvider<Entry> {
       let url = "redis://:" + connectProfile.accessKey + "@" + connectProfile.host;
       this.getRedisHandler(connKey).connect(url).then(() => { this.refresh(); });
     }
-  }
-
-  disconnectRedis(connKey: string) {
-    this.getRedisHandler(connKey).disconnect();
   }
 
   async getTreeItem(element: Entry): Promise<vscode.TreeItem> {
@@ -97,7 +98,10 @@ export class RedisProvider implements vscode.TreeDataProvider<Entry> {
       arguments: [result]
     };
 
-    if (element.type !== ItemType.Server) {
+    if (element.type === ItemType.Server) {
+      treeItem.contextValue = "redisServerNode";
+    }
+    else {
       treeItem.contextValue = "redisNode";
     }
     return treeItem;
