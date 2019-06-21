@@ -1,8 +1,8 @@
 {
   "name": "redis-xplorer",
   "displayName": "Redis Xplorer",
-  "description": "To access redis easily",
-  "version": "1.2.0",
+  "description": "Redis Xplorer is an open source plugin which allows you to easily access, modify and manage Redis Caches.",
+  "version": "1.2.1",
   "publisher": "Davidsekar",
   "author": {
     "name": "David Gnanasekaran",
@@ -19,7 +19,7 @@
     "onView:redisXplorer",
     "onCommand:config.commands.redisServer"
   ],
-  "main": "./out/extension",
+  "main": "./dist/extension",
   "contributes": {
     "configuration": [
       {
@@ -104,11 +104,14 @@
     ]
   },
   "scripts": {
-    "vscode:prepublish": "npm run compile",
-    "compile": "tsc -p ./",
-    "watch": "tsc -watch -p ./",
+    "vscode:prepublish": "webpack --mode production",
+    "start": "npm run webpack -- --watch",
+    "webpack": "webpack --mode development",
+    "webpack-dev": "webpack --mode development --watch",
+    "test-compile": "tsc -p ./",
+    "lint": "tslint -p ./",
     "postinstall": "node ./node_modules/vscode/bin/install",
-    "test": "npm run compile && node ./node_modules/vscode/bin/test",
+    "test": "npm run test-compile && node ./node_modules/vscode/bin/test",
     "publish": "vsce package && vsce publish"
   },
   "devDependencies": {
@@ -116,9 +119,12 @@
     "@types/lodash": "^4.14.134",
     "@types/mocha": "^2.2.42",
     "@types/node": "^8.10.25",
+    "ts-loader": "^6.0.4",
     "tslint": "^5.17.0",
     "typescript": "^3.5.2",
-    "vscode": "^1.1.34"
+    "vscode": "^1.1.34",
+    "webpack": "^4.35.0",
+    "webpack-cli": "^3.3.4"
   },
   "dependencies": {
     "ioredis": "^4.10.0",

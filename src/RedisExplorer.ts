@@ -176,8 +176,8 @@ export class RedisXplorer {
 
     vscode.workspace.onDidSaveTextDocument(event => {
       const extension = event.fileName.split(".");
-      if (extension[extension.length - 1] !== "redis") return;
-      if (!this.lastAccessedNode.key) return;
+      if (extension[extension.length - 1] !== "redis") { return; }
+      if (!this.lastAccessedNode.key) { return; }
 
       readFile(event.fileName, 'utf8', (err, data) => {
         if (err) {
@@ -207,9 +207,10 @@ export class RedisXplorer {
     vscode.window.withProgress(vsCodeProgressOptions, (progress) => {
       progress.report({ message: 'Initiate', increment: 0 });
       return new Promise(resolve => {
-        if (!resource)
+        if (!resource) {
           this.writeToEditorCallback('No Data', progress, resolve);
-        else if (resource.value == '#server#') {
+        }
+        else if (resource.value === '#server#') {
           progress.report({ message: 'Connection info.', increment: 30 });
           this.treeDataProvider.getServerNodeInfo(resource.serverName).then(result => this.writeToEditorCallback(result, progress, resolve));
         }
