@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import { isNil, isEmpty, remove } from "lodash";
+import { isNil, isEmpty, remove, each } from "lodash";
 import { writeFile, existsSync, mkdirSync, unlink, readFile } from "fs";
 
 import { XplorerConfig, XplorerProfiles, Entry } from "./model";
@@ -174,6 +174,21 @@ export class RedisXplorer {
       }
     });
 
+    vscode.commands.registerCommand("config.commands.redisServer.refreshServerItem", async () => {
+      this.treeDataProvider.refresh();
+    });
+
+    vscode.commands.registerCommand("config.commands.redisServer.filterServerItem", async (node: Entry) => {
+      let filterText = await vscode.window.showInputBox({
+        prompt: "Provide a pattern to filter redis keys e.g., 'abc*' , '*'"
+      });
+      filterText = filterText || '*';
+
+      await this.updatefilterText(node.serverName, filterText);
+
+      this.treeDataProvider.refresh();
+    });
+
     vscode.workspace.onDidSaveTextDocument(event => {
       const extension = event.fileName.split(".");
       if (extension[extension.length - 1] !== "redis") { return; }
@@ -243,6 +258,22 @@ export class RedisXplorer {
     setTimeout(() => {
       resolve();
     }, 1000);
+  }
+
+  private async updatefilterText(serverName: string, filterText: string) {
+    const configuration = vscode.workspace.getConfiguration();
+    this.xconfig = configuration.redisXplorer.config;
+    if (this.xconfig && !isEmpty(this.xconfig.profiles)) {
+      each(this.xconfig.profiles, (p) => {
+        if(p.name === serverName){
+          p.filter = filterText;
+        }
+      });
+     
+      this.saveXplorerConfig(this.xconfig).then(() => {
+        console.log('filtered successfully!');
+      });
+    }
   }
 
   private async saveXplorerConfig(config: XplorerConfig) {

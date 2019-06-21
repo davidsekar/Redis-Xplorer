@@ -63,11 +63,11 @@ class RedisHandler {
     });
   }
 
-  getKeys(): Promise<string[]> {
+  getKeys(pattern: string): Promise<string[]> {
     if (!this.isConnected) { return Promise.reject(); }
 
     return new Promise<string[]>((resolve, reject) => {
-      this.redisClient.keys("*", (error: any, result: any[]) => {
+      this.redisClient.keys(pattern, (error: any, result: any[]) => {
         if (error) {
           reject();
           return;

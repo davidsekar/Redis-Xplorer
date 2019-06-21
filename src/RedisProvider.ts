@@ -121,13 +121,14 @@ export class RedisProvider implements vscode.TreeDataProvider<Entry> {
           node.serverName = curValue.name;
           node.value = 'redis://:' + curValue.accessKey + '@' + curValue.host;
           node.dataType = typeof node.value;
+          node.filter = curValue.filter || '*';
           children.push(node);
         });
       }
       return children;
     } else if (element.type === ItemType.Server) {
       try {
-        const result = await this.getRedisHandler(element.serverName).getKeys();
+        const result = await this.getRedisHandler(element.serverName).getKeys(element.filter);
         return result.map((value: string) => {
           let node = new Entry();
           node.key = value;

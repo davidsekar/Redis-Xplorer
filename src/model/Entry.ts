@@ -7,4 +7,5 @@ export class Entry {
     value!: any;
     iconType!: ItemType;
     dataType!: string;
+    filter!: string;
 }

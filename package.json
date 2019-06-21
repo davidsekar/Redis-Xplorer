@@ -1,7 +1,7 @@
 {
   "name": "redis-xplorer",
   "displayName": "Redis Xplorer",
-  "description": "Redis Xplorer is an open source plugin which allows you to easily access, modify and manage Redis Caches.",
+  "description": "Redis Xplorer allows you to easily access, filter & modify redis keys",
   "version": "1.2.1",
   "publisher": "Davidsekar",
   "author": {
@@ -21,30 +21,35 @@
   ],
   "main": "./dist/extension",
   "contributes": {
-    "configuration": [
-      {
-        "title": "Redis Xplorer Configuration",
-        "properties": {
-          "redisXplorer.config": {
-            "type": "string",
-            "description": "Redis Server Address: Where redis client connect to"
-          }
+    "configuration": [{
+      "title": "Redis Xplorer Configuration",
+      "properties": {
+        "redisXplorer.config": {
+          "type": "string",
+          "description": "Redis Server Address: Where redis client connect to"
         }
       }
-    ],
+    }],
     "views": {
-      "explorer": [
-        {
-          "id": "redisXplorer",
-          "name": "Redis Xplorer"
-        }
-      ]
+      "explorer": [{
+        "id": "redisXplorer",
+        "name": "Redis Xplorer"
+      }]
     },
     "menus": {
-      "view/item/context": [
-        {
+      "view/item/context": [{
           "command": "config.commands.redisServer.delItem",
           "when": "view == redisXplorer && viewItem == redisNode",
+          "group": "inline"
+        },
+        {
+          "command": "config.commands.redisServer.delAllItems",
+          "when": "view == redisXplorer && viewItem == redisServerNode",
+          "group": "inline"
+        },
+        {
+          "command": "config.commands.redisServer.refreshServerItem",
+          "when": "view == redisXplorer && viewItem == redisServerNode",
           "group": "inline"
         },
         {
@@ -58,24 +63,15 @@
           "group": "inline"
         },
         {
-          "command": "config.commands.redisServer.delAllItems",
+          "command": "config.commands.redisServer.filterServerItem",
           "when": "view == redisXplorer && viewItem == redisServerNode",
           "group": "inline"
         }
       ]
     },
-    "commands": [
-      {
+    "commands": [{
         "command": "config.commands.redisServer",
         "title": "Redis Xplorer: Add new redis server address"
-      },
-      {
-        "command": "config.commands.redisServer.delAllItems",
-        "title": "(WARN) Flush entire REDIS",
-        "icon": {
-          "light": "resources/light/baseline_layers_clear_black_18dp.png",
-          "dark": "resources/dark/baseline_layers_clear_white_18dp.png"
-        }
       },
       {
         "command": "config.commands.redisServer.delItem",
@@ -99,6 +95,30 @@
         "icon": {
           "light": "resources/light/baseline_add_black_18dp.png",
           "dark": "resources/dark/baseline_add_white_18dp.png"
+        }
+      },
+      {
+        "command": "config.commands.redisServer.refreshServerItem",
+        "title": "Refresh Redis Connection",
+        "icon": {
+          "light": "resources/light/baseline_refresh_black_18dp.png",
+          "dark": "resources/dark/baseline_refresh_white_18dp.png"
+        }
+      },
+      {
+        "command": "config.commands.redisServer.filterServerItem",
+        "title": "Filter keys by name",
+        "icon": {
+          "light": "resources/light/baseline_filter_list_black_18dp.png",
+          "dark": "resources/dark/baseline_filter_list_white_18dp.png"
+        }
+      },
+      {
+        "command": "config.commands.redisServer.delAllItems",
+        "title": "(WARN) Flush entire REDIS",
+        "icon": {
+          "light": "resources/light/baseline_layers_clear_black_18dp.png",
+          "dark": "resources/dark/baseline_layers_clear_white_18dp.png"
         }
       }
     ]
