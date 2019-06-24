@@ -1,8 +1,9 @@
 import * as vscode from "vscode";
 import RedisHandler from "./RedisHandler";
 import * as path from "path";
-import { XplorerProfiles, XplorerConfig, Entry, ItemType } from "./model";
+import { XplorerProfiles, XplorerConfig, Entry } from "./model";
 import { isNil, find, unset } from "lodash";
+import { ItemType } from "./enum";
 
 export class RedisProvider implements vscode.TreeDataProvider<Entry> {
   private redisHandler: { [key: string]: RedisHandler };
@@ -16,7 +17,8 @@ export class RedisProvider implements vscode.TreeDataProvider<Entry> {
     this.redisHandler = {};
   }
 
-  public refresh() {
+  public refresh(profileName: string) {
+    console.log('Refresh profile : ' + profileName);
     this._onDidChangeTreeData.fire();
   }
 
@@ -40,7 +42,7 @@ export class RedisProvider implements vscode.TreeDataProvider<Entry> {
       let connectProfile: XplorerProfiles = xconfig.profiles[0];
       console.log("Redis connect to : ", connectProfile.host);
       let url = "redis://:" + connectProfile.accessKey + "@" + connectProfile.host;
-      this.getRedisHandler(connKey).connect(url).then(() => { this.refresh(); });
+      this.getRedisHandler(connKey).connect(url).then(() => { this.refresh(connKey); });
     }
   }
 
@@ -175,7 +177,7 @@ export class RedisProvider implements vscode.TreeDataProvider<Entry> {
         if (connectProfile) {
           console.log("Redis connect to : ", connectProfile.host);
           let url = "redis://:" + connectProfile.accessKey + "@" + connectProfile.host;
-          this.redisHandler[connKey].connect(url).then(() => { this.refresh(); });
+          this.redisHandler[connKey].connect(url).then(() => { this.refresh(connKey); });
         }
       }
     }

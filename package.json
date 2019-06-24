@@ -66,6 +66,11 @@
           "command": "config.commands.redisServer.filterServerItem",
           "when": "view == redisXplorer && viewItem == redisServerNode",
           "group": "inline"
+        },
+        {
+          "command": "config.commands.redisServer.edit",
+          "when": "view == redisXplorer && viewItem == redisServerNode",
+          "group": "inline"
         }
       ]
     },
@@ -74,11 +79,19 @@
         "title": "Redis Xplorer: Add new redis server address"
       },
       {
+        "command": "config.commands.redisServer.edit",
+        "title": "Redis Xplorer: Add new redis server address",
+        "icon": {
+          "light": "resources/light/baseline_edit_black_18dp.png",
+          "dark": "resources/dark/baseline_edit_white_18dp.png"
+        }
+      },
+      {
         "command": "config.commands.redisServer.delItem",
         "title": "Delete this redis item",
         "icon": {
-          "light": "resources/light/baseline_remove_black_18dp.png",
-          "dark": "resources/dark/baseline_remove_white_18dp.png"
+          "light": "resources/light/baseline_delete_forever_black_18dp.png",
+          "dark": "resources/dark/baseline_delete_forever_white_18dp.png"
         }
       },
       {
