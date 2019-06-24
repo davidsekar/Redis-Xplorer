@@ -1,11 +1,11 @@
 import * as vscode from "vscode";
-import { isNil } from "lodash";
+import { isNil, isUndefined } from "lodash";
 import { writeFile, readFile, unlink } from "fs";
 
 import { Entry, XplorerProfiles } from "./model";
 import { RedisProvider } from "./RedisProvider";
 import { ConfigHelper } from "./ConfigHelper";
-import { Command } from "./enum/Command";
+import { Command } from "./enum";
 
 const tempOutputFile = ".vscode/redis-xplorer.redis";
 const commandOk = "OK";
@@ -173,7 +173,11 @@ export class RedisXplorer {
     }
 
     let profileName = await vscode.window.showInputBox(inputOptions);
-    if (isNil(profileName) || profileName === '') {
+    if (isUndefined(profileName)) {
+      return;
+    }
+    
+    if (profileName === '') {
       vscode.window.showInformationMessage("Please provide a display name");
       return;
     }

@@ -3,7 +3,7 @@ import RedisHandler from "./RedisHandler";
 import * as path from "path";
 import { XplorerProfiles, XplorerConfig, Entry } from "./model";
 import { isNil, find, unset } from "lodash";
-import { ItemType } from "./enum";
+import { ItemType, Command } from "./enum";
 
 export class RedisProvider implements vscode.TreeDataProvider<Entry> {
   private redisHandler: { [key: string]: RedisHandler };
@@ -95,7 +95,7 @@ export class RedisProvider implements vscode.TreeDataProvider<Entry> {
     };
 
     treeItem.command = {
-      command: "redisXplorer.readData",
+      command: Command.ReadNodeData,
       title: "Read Data",
       arguments: [result]
     };
