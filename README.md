@@ -51,3 +51,9 @@ Redis Xplorer is a Visual Studio Code extension that allows you to
 ## Found a bug or have a suggestion
 
 In case, you have a suggestion or feature request. Kindly raise it as an issue [over here](https://github.com/davidsekar/Redis-Xplorer/issues).
+
+## Frequently Asked Questions
+
+Where are the settings saved ?
+
+This extension saves all the profile configurations in the currently opened folder / workspace. So that those informations are auto-loaded on next load.
