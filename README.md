@@ -1,14 +1,16 @@
 # Redis Xplorer
 
-Redis Xplorer is a visual studio code extension that allows you to
+Redis Xplorer is a Visual Studio Code extension that allows you to
 
-- Create/Delete multiple redis connection profile
-- See redis server inforamtion
-- Read and Edit redis cache items
-- Filter cache items list using text pattern e.g., `example*`. So that, you can view and work on keys that you need.
-- Modify the cache values and save.
+- Create/Edit/Delete multiple redis connection profile
 
-## Setup connection profile
+- See redis server connection inforamtion
+
+- Read, edit and save redis cache items
+
+- Filter & focus on required cache items using text pattern e.g., `example*`.
+
+## Setup a new connection profile
 
 1. Select `Redis Xplorer : Add new redis server connection profile` from the command palette.
 
@@ -48,4 +50,4 @@ Redis Xplorer is a visual studio code extension that allows you to
 
 ## Found a bug or have a suggestion
 
-In case, you have a suggestion or feature request. Kindly raise it as an issue under following [GitHub project](https://github.com/davidsekar/Redis-Xplorer)
+In case, you have a suggestion or feature request. Kindly raise it as an issue [over here](https://github.com/davidsekar/Redis-Xplorer/issues).

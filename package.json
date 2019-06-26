@@ -2,7 +2,7 @@
   "name": "redis-xplorer",
   "displayName": "Redis Xplorer",
   "description": "Redis Xplorer allows you to easily access, filter & modify redis keys",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "publisher": "Davidsekar",
   "author": {
     "name": "David Gnanasekaran",
