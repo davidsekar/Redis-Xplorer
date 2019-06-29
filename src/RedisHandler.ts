@@ -27,6 +27,10 @@ class RedisHandler {
     });
   }
 
+  setTlsOn() {
+    this.redisOptions.tls = true as any;
+  }
+
   disconnect(): void {
     if (this.redisClient) {
       this.redisClient.disconnect();

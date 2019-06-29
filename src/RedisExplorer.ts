@@ -1,11 +1,11 @@
 import * as vscode from "vscode";
-import { isNil, isUndefined } from "lodash";
+import { isNil, isUndefined, toNumber, isNumber } from "lodash";
 import { writeFile, readFile, unlink } from "fs";
 
 import { Entry, XplorerProfiles } from "./model";
 import { RedisProvider } from "./RedisProvider";
 import { ConfigHelper } from "./ConfigHelper";
-import { Command } from "./enum";
+import { Command, Constants } from "./enum";
 
 const tempOutputFile = ".vscode/redis-xplorer.redis";
 const commandOk = "OK";
@@ -176,7 +176,7 @@ export class RedisXplorer {
     if (isUndefined(profileName)) {
       return;
     }
-    
+
     if (profileName === '') {
       vscode.window.showInformationMessage("Please provide a display name");
       return;
@@ -195,6 +195,29 @@ export class RedisXplorer {
       return;
     }
 
+    inputOptions.prompt = "Port Number";
+    inputOptions.value = Constants.RedisDefaultPortNo;
+    inputOptions.placeHolder = "e.g., SSL: 6380; Non-SSL:6379; Or any custom port number";
+    if (isEdit) {
+      if (xconfigProfile!.port) {
+        inputOptions.value = xconfigProfile!.port.toString();
+      }
+
+      inputOptions.valueSelection = undefined;
+    }
+
+    let portNumber = await vscode.window.showInputBox(inputOptions);
+    if (isNil(portNumber) || portNumber === "") {
+      vscode.window.showInformationMessage("Please provide port number");
+      return;
+    } else {
+      let port = toNumber(portNumber);
+      if (!isNumber(port)) {
+        vscode.window.showInformationMessage("Please provide a valid number");
+        return;
+      }
+    }
+
     inputOptions.prompt = "Password";
     inputOptions.placeHolder = "URL-Safe / Hashed password";
     if (isEdit) {
@@ -208,7 +231,7 @@ export class RedisXplorer {
       return;
     }
 
-    this.configHelper.addOrUpdateConfig(profileName, hostName, password, oldProfileName).then(() => this.treeDataProvider.refresh(profileName!));
+    this.configHelper.addOrUpdateConfig(profileName, hostName, portNumber, password, oldProfileName).then(() => this.treeDataProvider.refresh(profileName!));
   }
 
   private async openResource(resource: Entry) {

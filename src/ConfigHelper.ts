@@ -14,7 +14,7 @@ export class ConfigHelper {
      * @param hostName hostname of the server to connect
      * @param password password to authenticate connection
      */
-    public async addOrUpdateConfig(profileName: string, hostName: string, password: string, oldProfileName: string) {
+    public async addOrUpdateConfig(profileName: string, hostName: string, port: string, password: string, oldProfileName: string) {
         return new Promise(async resolve => {
             let xconfig: XplorerConfig = await this.getXConfig();
             let isUpdated = false;
@@ -23,12 +23,13 @@ export class ConfigHelper {
                     p.name = profileName;
                     p.host = hostName;
                     p.accessKey = password;
+                    p.port = port;
                     isUpdated = true;
                 }
             });
 
             if (!isUpdated) {
-                let profile = new XplorerProfiles(profileName, hostName, password);
+                let profile = new XplorerProfiles(profileName, hostName, port, password);
                 xconfig.profiles.push(profile);
             }
             await this.saveXplorerConfig(xconfig);

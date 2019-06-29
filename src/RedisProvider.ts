@@ -3,7 +3,7 @@ import RedisHandler from "./RedisHandler";
 import * as path from "path";
 import { XplorerProfiles, XplorerConfig, Entry } from "./model";
 import { isNil, find, unset } from "lodash";
-import { ItemType, Command } from "./enum";
+import { ItemType, Command, Constants } from "./enum";
 
 export class RedisProvider implements vscode.TreeDataProvider<Entry> {
   private redisHandler: { [key: string]: RedisHandler };
@@ -33,17 +33,6 @@ export class RedisProvider implements vscode.TreeDataProvider<Entry> {
   public disconnectRedis(connKey: string) {
     this.getRedisHandler(connKey).disconnect();
     unset(this.redisHandler, connKey);
-  }
-
-  async connectRedis(connKey: string) {
-    const configuration = vscode.workspace.getConfiguration();
-    let xconfig: XplorerConfig = configuration.redisXplorer.config;
-    if (xconfig && xconfig.profiles.length > 0) {
-      let connectProfile: XplorerProfiles = xconfig.profiles[0];
-      console.log("Redis connect to : ", connectProfile.host);
-      let url = "redis://:" + connectProfile.accessKey + "@" + connectProfile.host;
-      this.getRedisHandler(connKey).connect(url).then(() => { this.refresh(connKey); });
-    }
   }
 
   async getTreeItem(element: Entry): Promise<vscode.TreeItem> {
@@ -176,7 +165,22 @@ export class RedisProvider implements vscode.TreeDataProvider<Entry> {
         });
         if (connectProfile) {
           console.log("Redis connect to : ", connectProfile.host);
-          let url = "redis://:" + connectProfile.accessKey + "@" + connectProfile.host;
+
+          let portNumber = connectProfile.port || Constants.RedisDefaultPortNo;
+          let url = '';
+
+          if (portNumber === Constants.RedisSslPortNo) {
+            url += "rediss://";
+            this.redisHandler[connKey].setTlsOn();
+          } else {
+            url += "redis://";
+          }
+
+          if (connectProfile.accessKey !== '') {
+            url += ':' + connectProfile.accessKey + "@";
+          }
+
+          url += connectProfile.host + ":" + portNumber;
           this.redisHandler[connKey].connect(url).then(() => { this.refresh(connKey); });
         }
       }
