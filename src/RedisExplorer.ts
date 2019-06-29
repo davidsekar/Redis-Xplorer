@@ -218,6 +218,7 @@ export class RedisXplorer {
       }
     }
 
+    inputOptions.value = undefined;
     inputOptions.prompt = "Password";
     inputOptions.placeHolder = "URL-Safe / Hashed password";
     if (isEdit) {
