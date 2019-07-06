@@ -4,9 +4,9 @@ Redis Xplorer is a Visual Studio Code extension that allows you to
 
 - Create/Edit/Delete multiple redis connection profiles
 
-- View Redis server connection inforamtion
+- View Redis server connection information
 
-- Read, Edit and Save redis values
+- Read, edit and save redis values
 
 - Filter & focus on required cache items using text pattern e.g., `example*`.
 
@@ -50,14 +50,43 @@ Redis Xplorer is a Visual Studio Code extension that allows you to
 
 ![Redis item actions](images/delete-redis-item.jpg)
 
-## Have a suggestion
+## Configuration
 
-In case, you have a suggestion, bug report or new feature request. Kindly raise it as an issue [over here](https://github.com/davidsekar/Redis-Xplorer/issues).
+This extension saves all your configured profiles under currently opened folder/workspace.
 
-## Frequently Asked Questions
+i.e., using `.vscode/settings.json`.
 
-**Where are my connection profiles persisted?**
+### Schema
 
-This extension saves all the configured profiles in the currently opened folder/workspace.
+~~~~xml
+{
+    ...,
+    "redisXplorer.config": {
+        "profiles": [
+            {
+                "name": "My Redis",
+                "host": "server.redis.cache.windows.net",
+                "accessKey": "ABCDEFGHIJKLMNOPQRSTUVWXYZAAABAC=",
+                "filter": "*",
+                "port": "6379"
+            }
+        ]
+    }
+}
+~~~~
 
-i.e., `.vscode/settings.json`.
+## Support
+
+Do you have
+
+- Any suggestion or
+- Found a crazy Bug or
+- Need a new feature
+
+Kindly raise it as an issue [over here](https://github.com/davidsekar/Redis-Xplorer/issues).
+
+Last but not least, I'll try to address all your support queries and issues as early as possible. If you wish to thank me or support this extension!
+
+[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.me/DavidChelliah)
+
+Thanks for using this extension.

@@ -1,4 +1,5 @@
 import * as Redis from "ioredis";
+import { Constants } from "./enum";
 
 class RedisHandler {
   private redisClient!: Redis.Redis;
@@ -67,6 +68,12 @@ class RedisHandler {
     });
   }
 
+  /**
+   * This function returns all the redis keys after filtering using text pattern
+   * Warning: This uses Redis keys() method, that should not be used in production environment
+   * with large number of keys.
+   * @param pattern Text pattern to use and filter the Redis keys
+   */
   getKeys(pattern: string): Promise<string[]> {
     if (!this.isConnected) { return Promise.reject(); }
 
@@ -76,6 +83,40 @@ class RedisHandler {
           reject();
           return;
         }
+        resolve(result.sort());
+      });
+    }).catch(() => {
+      return [];
+    });
+  }
+
+  /**
+   * This function returns all the redis keys after filtering using text pattern.
+   * This method can be safetly used in production environment, as it reads small set of records on 
+   * each scan request.
+   * @param pattern Text pattern to use and filter the Redis keys
+   */
+  getKeysV2(pattern: string): Promise<string[]> {
+    if (!this.isConnected) { return Promise.reject(); }
+
+    return new Promise<string[]>((resolve, reject) => {
+      let limit = Constants.RedisScanLimit || 100;
+      let stream = this.redisClient.scanStream({ match: pattern, count: limit });
+      let result: any[] = [];
+
+      stream.on('data', (resultKeys) => {
+        for (var i = 0; i < resultKeys.length; i++) {
+          result.push(resultKeys[i]);
+        }
+      });
+
+      stream.on('error', (err) => {
+        console.log(err);
+        reject();
+        return;
+      });
+
+      stream.on('end', () => {
         resolve(result.sort());
       });
     }).catch(() => {

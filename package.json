@@ -157,16 +157,16 @@
     "@types/ioredis": "^4.0.12",
     "@types/lodash": "^4.14.135",
     "@types/mocha": "^2.2.42",
-    "@types/node": "^8.10.25",
+    "@types/node": "^8.10.50",
     "ts-loader": "^6.0.4",
     "tslint": "^5.18.0",
     "typescript": "^3.5.2",
     "vscode": "^1.1.35",
-    "webpack": "^4.35.0",
+    "webpack": "^4.35.2",
     "webpack-cli": "^3.3.5"
   },
   "dependencies": {
-    "ioredis": "^4.10.0",
+    "ioredis": "^4.11.1",
     "lodash": "^4.17.11"
   },
   "repository": {

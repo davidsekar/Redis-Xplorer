@@ -5,10 +5,9 @@ import { writeFile, readFile, unlink } from "fs";
 import { Entry, XplorerProfiles } from "./model";
 import { RedisProvider } from "./RedisProvider";
 import { ConfigHelper } from "./ConfigHelper";
-import { Command, Constants } from "./enum";
+import { Command, Constants, Message } from "./enum";
 
 const tempOutputFile = ".vscode/redis-xplorer.redis";
-const commandOk = "OK";
 
 export class RedisXplorer {
   redisXplorer: vscode.TreeView<Entry>;
@@ -47,28 +46,28 @@ export class RedisXplorer {
 
     vscode.commands.registerCommand(Command.AddRedisKey, async (node: Entry) => {
       const key = await vscode.window.showInputBox({
-        prompt: "Provide a new key "
+        prompt: Message.PromptNewRedisKey
       });
 
-      if (key !== "") {
-        this.lastAccessedNode = node;
-        this.lastAccessedNode.key = key || 'No keyname specified';
-
-        writeFile(
-          `${vscode.workspace.rootPath}/${tempOutputFile}`,
-          "",
-          err => {
-            if (err) {
-              console.log(err);
-              return;
-            }
-            vscode.workspace.openTextDocument(`${vscode.workspace.rootPath}/${tempOutputFile}`)
-              .then(doc => {
-                vscode.window.showTextDocument(doc);
-              });
-          }
-        );
+      if (isNil(key) || key === '') {
+        return;
       }
+
+      this.lastAccessedNode = node;
+      this.lastAccessedNode.key = key || 'No keyname specified';
+
+      writeFile(`${vscode.workspace.rootPath}/${tempOutputFile}`,
+        "",
+        err => {
+          if (err) {
+            console.log(err);
+            return;
+          }
+          vscode.workspace.openTextDocument(`${vscode.workspace.rootPath}/${tempOutputFile}`)
+            .then(doc => {
+              vscode.window.showTextDocument(doc);
+            });
+        });
     });
 
     vscode.commands.registerCommand(Command.DeleteRedisKey, (node: Entry) => {
@@ -81,10 +80,10 @@ export class RedisXplorer {
     );
 
     vscode.commands.registerCommand(Command.DeleteRedisConnection, async (node: Entry) => {
-      const canDelete = await vscode.window.showWarningMessage("Do you really want to delete \"" + node.serverName + "\" profile ?",
-        { modal: true, }, commandOk);
+      const canDelete = await vscode.window.showWarningMessage(Message.WarnProfileDeletion + node.serverName + " ?",
+        { modal: true, }, Command.CommandOk);
 
-      if (canDelete === commandOk && node) {
+      if (canDelete === Command.CommandOk && node) {
         let success = await this.configHelper.deleteXplorerConfig(node.serverName);
         if (success) {
           this.treeDataProvider.refresh(node.serverName);
@@ -97,11 +96,11 @@ export class RedisXplorer {
     vscode.commands.registerCommand(Command.DeleteAllKeys, async (node: Entry) => {
       //   this.treeDataProvider.refresh();
       const result = await vscode.window.showWarningMessage(
-        "Do you REALLY want to delete all items ?",
+        Message.WarnDeleteAll,
         { modal: true },
-        "Delete All"
+        Command.CommandDeleteAll
       );
-      if (result === "Delete All") {
+      if (result === Command.CommandDeleteAll) {
         this.treeDataProvider.flushAll(node.serverName);
         this.treeDataProvider.refresh(node.serverName);
       }
@@ -113,7 +112,7 @@ export class RedisXplorer {
 
     vscode.commands.registerCommand(Command.FilterServerByPattern, async (node: Entry) => {
       let filterText = await vscode.window.showInputBox({
-        prompt: "Provide a pattern to filter redis keys e.g., 'abc*' , '*'",
+        prompt: Message.PromptRedisKeyFilterPattern,
         value: node.filter
       });
       if (!filterText) {
@@ -163,8 +162,8 @@ export class RedisXplorer {
 
     let inputOptions: vscode.InputBoxOptions = {
       ignoreFocusOut: true,
-      prompt: "Display Name",
-      placeHolder: "enter a nick name",
+      prompt: Message.PromptDisplayName,
+      placeHolder: Message.PlaceholderDisplayName,
     };
     if (isEdit) {
       oldProfileName = xconfigProfile!.name;
@@ -178,12 +177,12 @@ export class RedisXplorer {
     }
 
     if (profileName === '') {
-      vscode.window.showInformationMessage("Please provide a display name");
+      vscode.window.showInformationMessage(Message.InfoDisplayName);
       return;
     }
 
-    inputOptions.prompt = "Host server";
-    inputOptions.placeHolder = "server.redis.cache.windows.net";
+    inputOptions.prompt = Message.PromptHostserver;
+    inputOptions.placeHolder = Message.PlaceholderHostserver;
     if (isEdit) {
       inputOptions.value = xconfigProfile!.host;
       inputOptions.valueSelection = undefined;
@@ -191,13 +190,13 @@ export class RedisXplorer {
 
     let hostName = await vscode.window.showInputBox(inputOptions);
     if (isNil(hostName) || hostName === "") {
-      vscode.window.showInformationMessage("Please provide Redis host server name");
+      vscode.window.showInformationMessage(Message.InfoHostServer);
       return;
     }
 
-    inputOptions.prompt = "Port Number";
+    inputOptions.prompt = Message.PromptPortNumber;
     inputOptions.value = Constants.RedisDefaultPortNo;
-    inputOptions.placeHolder = "e.g., SSL: 6380; Non-SSL:6379; Or any custom port number";
+    inputOptions.placeHolder = Message.PlaceholderPortNumber;
     if (isEdit) {
       if (xconfigProfile!.port) {
         inputOptions.value = xconfigProfile!.port.toString();
@@ -208,19 +207,19 @@ export class RedisXplorer {
 
     let portNumber = await vscode.window.showInputBox(inputOptions);
     if (isNil(portNumber) || portNumber === "") {
-      vscode.window.showInformationMessage("Please provide port number");
+      vscode.window.showInformationMessage(Message.InfoPortNumber);
       return;
     } else {
       let port = toNumber(portNumber);
       if (!isNumber(port)) {
-        vscode.window.showInformationMessage("Please provide a valid number");
+        vscode.window.showInformationMessage(Message.InfoInvalidPortNumber);
         return;
       }
     }
 
     inputOptions.value = undefined;
-    inputOptions.prompt = "Password";
-    inputOptions.placeHolder = "URL-Safe / Hashed password";
+    inputOptions.prompt = Message.PromptPassword;
+    inputOptions.placeHolder = Message.PlaceholderPassword;
     if (isEdit) {
       inputOptions.value = xconfigProfile!.accessKey;
       inputOptions.valueSelection = undefined;
@@ -228,7 +227,7 @@ export class RedisXplorer {
 
     const password = await vscode.window.showInputBox(inputOptions);
     if (isNil(password) || password === "") {
-      vscode.window.showInformationMessage("Please provide Redis password");
+      vscode.window.showInformationMessage(Message.InfoRedisPassword);
       return;
     }
 
@@ -239,21 +238,21 @@ export class RedisXplorer {
     let vsCodeProgressOptions: vscode.ProgressOptions = {
       location: vscode.ProgressLocation.Notification,
       cancellable: false,
-      title: 'Redis Xplorer'
+      title: Message.TitleRedisXplorer
     };
 
     vscode.window.withProgress(vsCodeProgressOptions, (progress) => {
-      progress.report({ message: 'Initiate', increment: 0 });
+      progress.report({ message: Message.ProgressInitiate, increment: 0 });
       return new Promise(resolve => {
         if (!resource) {
-          this.writeToEditorCallback('No Data', progress, resolve);
+          this.writeToEditorCallback(Message.InfoNoData, progress, resolve);
         }
         else if (resource.value === '#server#') {
-          progress.report({ message: 'Connection info.', increment: 30 });
+          progress.report({ message: Message.ProgressConnectionInfo, increment: 30 });
           this.treeDataProvider.getServerNodeInfo(resource.serverName).then(result => this.writeToEditorCallback(result, progress, resolve));
         }
         else {
-          progress.report({ message: 'Get value for `' + resource.value + '`', increment: 30 });
+          progress.report({ message: Message.ProgressGetValueFor + '`' + resource.value + '`', increment: 30 });
           this.treeDataProvider.getNodeValue(resource.key, resource.serverName).then(result => this.writeToEditorCallback(result, progress, resolve));
         }
       });
@@ -261,7 +260,7 @@ export class RedisXplorer {
   }
 
   private writeToEditorCallback(result: string, progress: vscode.Progress<object>, resolve: any) {
-    progress.report({ message: 'Write to file', increment: 80 });
+    progress.report({ message: Message.ProgressWriteToFile, increment: 80 });
     writeFile(
       `${vscode.workspace.rootPath}/${tempOutputFile}`,
       result,
@@ -277,7 +276,7 @@ export class RedisXplorer {
           });
       }
     );
-    progress.report({ message: 'Done', increment: 100 });
+    progress.report({ message: Message.ProgressDone, increment: 100 });
     setTimeout(() => {
       resolve();
     }, 1000);

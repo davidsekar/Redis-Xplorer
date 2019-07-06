@@ -12,5 +12,9 @@ export enum Command {
     // Individual Node/Redis KVPair
     DeleteAllKeys = "config.commands.redisServer.delAllItems",
     AddRedisKey = "config.commands.redisServer.addItem",
-    DeleteRedisKey = "config.commands.redisServer.delItem"
+    DeleteRedisKey = "config.commands.redisServer.delItem",
+
+    // Button Commands
+    CommandOk = 'OK',
+    CommandDeleteAll = 'Delete All'
 }
