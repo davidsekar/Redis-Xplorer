@@ -2,7 +2,7 @@
   "name": "redis-xplorer",
   "displayName": "Redis Xplorer",
   "description": "Connect to multiple Redis servers simultaneously (TLS supported). Perform simple read, write & filter keys operations with ease.",
-  "version": "1.2.3",
+  "version": "1.2.4",
   "publisher": "Davidsekar",
   "author": {
     "name": "David Gnanasekaran",
