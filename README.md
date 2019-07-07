@@ -1,14 +1,14 @@
 # Redis Xplorer
 
-Redis Xplorer is a Visual Studio Code extension that allows you to
+Redis Xplorer is a Visual Studio Code extension that allows you to manage Redis values with ease. Using this extension, you can
 
-- Create/Edit/Delete multiple redis connection profiles
+- Create, edit & maintain multiple redis connection profiles
 
 - View Redis server connection information
 
-- Read, edit and save redis values
+- Read, edit and save Redis values from within VS editor with all supported language features.
 
-- Filter & focus on required cache items using text pattern e.g., `example*`.
+- Filter Redis keys & focus on required items using text pattern e.g., `example*`.
 
 ## Setup a new connection profile
 
@@ -50,42 +50,78 @@ Redis Xplorer is a Visual Studio Code extension that allows you to
 
 ![Redis item actions](images/delete-redis-item.jpg)
 
-## Configuration
+## Performance consideration
+
+Using `Keys()` method to retrieve all keys (Millon keys or more) on production environment can result in performance issues, due to blocking nature of long running Redis request. So, latest `scanStream()` method is to query Redis keys in a paginated way i.e., requesting `n` keys on each request. That way redis is free to server other requests in parallel.
+
+The number of items to query on each request can be configured by accessing `Redis Xplorer: Max. number of items to fetch per request` from the command palatte (`Ctrl + Shift + P`).
+
+![Redis item actions](images/redis-scan-items-count.jpg)
+
+## Configurations
 
 This extension saves all your configured profiles under currently opened folder/workspace.
 
 i.e., using `.vscode/settings.json`.
 
-### Schema
+### JSON Schema for configuration
 
 ~~~~xml
 {
-    ...,
+  "title": "Redis Xplorer Configuration",
+  "properties": {
     "redisXplorer.config": {
-        "profiles": [
-            {
-                "name": "My Redis",
-                "host": "server.redis.cache.windows.net",
-                "accessKey": "ABCDEFGHIJKLMNOPQRSTUVWXYZAAABAC=",
-                "filter": "*",
-                "port": "6379"
+      "type": "object",
+      "description": "Redis server connection configuration & profiles",
+      "properties": {
+        "scanLimit": {
+          "type": "number",
+          "description": "Number of items to scan on each request to Redis server"
+        },
+        "profiles": {
+          "type": "array",
+          "description": "Redis connection profiles",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Profile nick name"
+              },
+              "host": {
+                "type": "string",
+                "description": "Redis server/host name"
+              },
+              "accessKey": {
+                "type": "string",
+                "description": "Password to authenticate"
+              },
+              "filter": {
+                "type": "string",
+                "description": "Pattern to filter redis keys"
+              },
+              "port": {
+                "type": "string",
+                "description": "Port number to connect on the Redis server"
+              }
             }
-        ]
+          }
+        }
+      }
     }
+  }
 }
 ~~~~
 
 ## Support
 
-Do you have
+- Have any suggestion ?
+- Found an annoying bug ?
+- Miss any essential feature ?
 
-- Any suggestion or
-- Found a crazy Bug or
-- Need a new feature
+Kindly raise it as an issue [over here](https://github.com/davidsekar/Redis-Xplorer/issues). I'll try my best to address all your support queries and issues as early as possible.
 
-Kindly raise it as an issue [over here](https://github.com/davidsekar/Redis-Xplorer/issues).
-
-Last but not least, I'll try to address all your support queries and issues as early as possible. If you wish to thank me or support this extension!
+If you wish to thank me or support this extension development!
 
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.me/DavidChelliah)
 

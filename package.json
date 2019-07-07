@@ -115,7 +115,7 @@
       },
       {
         "command": "config.commands.redisServer.scanLimit",
-        "title": "Redis Xplorer: Set a count of items to scan/stream per request"
+        "title": "Redis Xplorer: Max. number of items to fetch per request"
       },
       {
         "command": "config.commands.redisServer.edit",
