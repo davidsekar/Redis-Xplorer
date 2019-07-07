@@ -1,6 +1,7 @@
 export enum Command {
     // Common
     ReadNodeData = "redisXplorer.readData",
+    ConfigureScanLimit = "config.commands.redisServer.scanLimit",
 
     // Server Node
     AddRedisConnection = "config.commands.redisServer",

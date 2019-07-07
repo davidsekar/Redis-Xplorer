@@ -21,28 +21,58 @@
   ],
   "main": "./dist/extension",
   "contributes": {
-    "configuration": [
-      {
-        "title": "Redis Xplorer Configuration",
-        "properties": {
-          "redisXplorer.config": {
-            "type": "string",
-            "description": "Redis Server Address: Where redis client connect to"
+    "configuration": [{
+      "title": "Redis Xplorer Configuration",
+      "properties": {
+        "redisXplorer.config": {
+          "type": "object",
+          "description": "Redis server connection configuration & profiles",
+          "properties": {
+            "scanLimit": {
+              "type": "number",
+              "description": "Number of items to scan on each request to Redis server"
+            },
+            "profiles": {
+              "type": "array",
+              "description": "Redis connection profiles",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "Profile nick name"
+                  },
+                  "host": {
+                    "type": "string",
+                    "description": "Redis server/host name"
+                  },
+                  "accessKey": {
+                    "type": "string",
+                    "description": "Password to authenticate"
+                  },
+                  "filter": {
+                    "type": "string",
+                    "description": "Pattern to filter redis keys"
+                  },
+                  "port": {
+                    "type": "string",
+                    "description": "Port number to connect on the Redis server"
+                  }
+                }
+              }
+            }
           }
         }
       }
-    ],
+    }],
     "views": {
-      "explorer": [
-        {
-          "id": "redisXplorer",
-          "name": "Redis Xplorer"
-        }
-      ]
+      "explorer": [{
+        "id": "redisXplorer",
+        "name": "Redis Xplorer"
+      }]
     },
     "menus": {
-      "view/item/context": [
-        {
+      "view/item/context": [{
           "command": "config.commands.redisServer.delItem",
           "when": "view == redisXplorer && viewItem == redisNode",
           "group": "inline"
@@ -79,10 +109,13 @@
         }
       ]
     },
-    "commands": [
-      {
+    "commands": [{
         "command": "config.commands.redisServer",
         "title": "Redis Xplorer: Add new redis server connection profile"
+      },
+      {
+        "command": "config.commands.redisServer.scanLimit",
+        "title": "Redis Xplorer: Set a count of items to scan/stream per request"
       },
       {
         "command": "config.commands.redisServer.edit",

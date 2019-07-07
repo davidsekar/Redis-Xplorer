@@ -34,6 +34,25 @@ export class RedisXplorer {
       return this.openResource(resource);
     });
 
+    vscode.commands.registerCommand(Command.ConfigureScanLimit, async () => {
+      const scanLimit = await vscode.window.showInputBox({
+        prompt: Message.PromptRedisScanLimit
+      });
+
+      if (isNil(scanLimit) || scanLimit === '') {
+        return;
+      }
+
+      let scanLimitNo = toNumber(scanLimit);
+      if (!isNumber(scanLimitNo) || scanLimitNo < 1) {
+        vscode.window.showInformationMessage(Message.InfoInvalidScanLimit);
+        return;
+      }
+
+      await this.configHelper.saveRedisScanLimit(scanLimitNo);
+      this.treeDataProvider.setRedisScanLimit(scanLimitNo);
+    });
+
     vscode.commands.registerCommand(Command.AddRedisConnection, async () => {
       await this.setupConnectionProfile();
     });

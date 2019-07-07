@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
 import { XplorerConfig, XplorerProfiles } from "./model";
-import { remove, isEmpty, isNil, each, find } from "lodash";
+import { remove, isEmpty, isNil, each, find, cloneDeep } from "lodash";
 
 /**
  * Helper class to manage the vscode workspace configuration
@@ -81,6 +81,20 @@ export class ConfigHelper {
             return p.name === name;
         });
         return profile;
+    }
+
+    /**
+     * Save a new count of items to fetch from Redis server incrementally
+     * @param limit Number of items to request in a scan (each request)
+     */
+    public async saveRedisScanLimit(limit: number) {
+        let xconfig = await this.getXConfig();
+
+        // Direct child object in Xplorer Config is readonly,
+        // So do a deepcopy and then modify the value. 
+        let clonedXConfig = cloneDeep(xconfig);
+        clonedXConfig.scanLimit = limit;
+        await this.saveXplorerConfig(clonedXConfig);
     }
 
     /**

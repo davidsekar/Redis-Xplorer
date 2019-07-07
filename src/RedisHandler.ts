@@ -1,5 +1,4 @@
 import * as Redis from "ioredis";
-import { Constants } from "./enum";
 
 class RedisHandler {
   private redisClient!: Redis.Redis;
@@ -96,12 +95,11 @@ class RedisHandler {
    * each scan request.
    * @param pattern Text pattern to use and filter the Redis keys
    */
-  getKeysV2(pattern: string): Promise<string[]> {
+  getKeysV2(pattern: string, scanLimit: number): Promise<string[]> {
     if (!this.isConnected) { return Promise.reject(); }
 
     return new Promise<string[]>((resolve, reject) => {
-      let limit = Constants.RedisScanLimit || 100;
-      let stream = this.redisClient.scanStream({ match: pattern, count: limit });
+      let stream = this.redisClient.scanStream({ match: pattern, count: scanLimit });
       let result: any[] = [];
 
       stream.on('data', (resultKeys) => {

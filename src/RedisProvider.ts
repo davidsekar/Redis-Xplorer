@@ -7,14 +7,14 @@ import { ItemType, Command, Constants } from "./enum";
 
 export class RedisProvider implements vscode.TreeDataProvider<Entry> {
   private redisHandler: { [key: string]: RedisHandler };
-  private _onDidChangeTreeData: vscode.EventEmitter<
-    any
-  > = new vscode.EventEmitter<any>();
+  private _onDidChangeTreeData: vscode.EventEmitter<any> = new vscode.EventEmitter<any>();
+  private scanLimit: number;
   readonly onDidChangeTreeData: vscode.Event<any> = this._onDidChangeTreeData
     .event;
 
   constructor() {
     this.redisHandler = {};
+    this.scanLimit = Constants.RedisScanLimit;
   }
 
   public refresh(profileName: string) {
@@ -119,7 +119,7 @@ export class RedisProvider implements vscode.TreeDataProvider<Entry> {
       return children;
     } else if (element.type === ItemType.Server) {
       try {
-        const result = await this.getRedisHandler(element.serverName).getKeysV2(element.filter);
+        const result = await this.getRedisHandler(element.serverName).getKeysV2(element.filter, this.scanLimit);
         return result.map((value: string) => {
           let node = new Entry();
           node.key = value;
@@ -146,6 +146,10 @@ export class RedisProvider implements vscode.TreeDataProvider<Entry> {
     this.getRedisHandler(connKey).setObject(key, value);
   }
 
+  setRedisScanLimit(limit: number) {
+    this.scanLimit = limit;
+  }
+
   deleteRedis(key: string, connKey: string) {
     this.getRedisHandler(connKey).delete(key);
   }
@@ -159,29 +163,35 @@ export class RedisProvider implements vscode.TreeDataProvider<Entry> {
       this.redisHandler[connKey] = new RedisHandler();
       const configuration = vscode.workspace.getConfiguration();
       let xconfig: XplorerConfig = configuration.redisXplorer.config;
-      if (xconfig && xconfig.profiles.length > 0) {
-        let connectProfile: XplorerProfiles | undefined = find(xconfig.profiles, (o) => {
-          return o.name === connKey;
-        });
-        if (connectProfile) {
-          console.log("Redis connect to : ", connectProfile.host);
+      if (xconfig) {
 
-          let portNumber = connectProfile.port || Constants.RedisDefaultPortNo;
-          let url = '';
+        if (xconfig.scanLimit) { this.scanLimit = xconfig.scanLimit; }
 
-          if (portNumber === Constants.RedisSslPortNo) {
-            url += "rediss://";
-            this.redisHandler[connKey].setTlsOn();
-          } else {
-            url += "redis://";
+        if (xconfig.profiles.length > 0) {
+          let connectProfile: XplorerProfiles | undefined = find(xconfig.profiles, (o) => {
+            return o.name === connKey;
+          });
+
+          if (connectProfile) {
+            console.log("Redis connect to : ", connectProfile.host);
+
+            let portNumber = connectProfile.port || Constants.RedisDefaultPortNo;
+            let url = '';
+
+            if (portNumber === Constants.RedisSslPortNo) {
+              url += "rediss://";
+              this.redisHandler[connKey].setTlsOn();
+            } else {
+              url += "redis://";
+            }
+
+            if (connectProfile.accessKey !== '') {
+              url += ':' + connectProfile.accessKey + "@";
+            }
+
+            url += connectProfile.host + ":" + portNumber;
+            this.redisHandler[connKey].connect(url).then(() => { this.refresh(connKey); });
           }
-
-          if (connectProfile.accessKey !== '') {
-            url += ':' + connectProfile.accessKey + "@";
-          }
-
-          url += connectProfile.host + ":" + portNumber;
-          this.redisHandler[connKey].connect(url).then(() => { this.refresh(connKey); });
         }
       }
     }

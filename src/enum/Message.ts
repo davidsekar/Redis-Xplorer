@@ -7,6 +7,7 @@ export enum Message {
     PromptHostserver = 'Host server ',
     PromptPortNumber = 'Port Number ',
     PromptPassword = 'Password ',
+    PromptRedisScanLimit = 'Number of items to scan/stream on each request',
 
     WarnProfileDeletion = 'Do you really want to delete the selected profile - ',
     WarnDeleteAll = 'Do you REALLY want to delete all items ? ',
@@ -14,7 +15,8 @@ export enum Message {
     InfoDisplayName = 'Please provide a display name ',
     InfoHostServer = 'Please provide Redis host server name ',
     InfoPortNumber = 'Please provide port number ',
-    InfoInvalidPortNumber = 'Please provide a valid number ',
+    InfoInvalidPortNumber = 'Please provide a valid port number ',
+    InfoInvalidScanLimit = 'Please provide a valid number',
     InfoRedisPassword = 'Please provide Redis password ',
     InfoNoData = 'No Data',
 
@@ -22,6 +24,7 @@ export enum Message {
     PlaceholderHostserver = 'server.redis.cache.windows.net',
     PlaceholderPortNumber = 'e.g., SSL: 6380; Non-SSL:6379; Or any custom port number',
     PlaceholderPassword = 'URL-Safe Hashed password',
+    PlaceholderRedisScanLimit = 'Specifying a large number causes performance issue in production (Default: 200)',
 
     ProgressInitiate = 'Initiate',
     ProgressConnectionInfo = 'Connection info.',
