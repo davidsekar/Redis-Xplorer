@@ -44,7 +44,7 @@ Redis Xplorer is a Visual Studio Code extension that allows you to manage Redis 
 
 ## Action available on Redis item
 
-1. On selecting a redis item, the value is loaded in the text pane. The contents can be edited and saved using `save (ctrl + s)` command
+1. On selecting a redis item, the value is loaded in the text pane. Then, the contents can be edited and saved using `save (ctrl + s)` command
 
 2. Individual redis item can be deleted by clicking on the trash icon that appears while hovering on item.
 
@@ -52,15 +52,15 @@ Redis Xplorer is a Visual Studio Code extension that allows you to manage Redis 
 
 ## Performance consideration
 
-Using `Keys()` method to retrieve all keys (Millon keys or more) on production environment can result in performance issues, due to blocking nature of long running Redis request. So, latest `scanStream()` method is to query Redis keys in a paginated way i.e., requesting `n` keys on each request. That way redis is free to server other requests in parallel.
+Using Redis - `Keys()` method to retrieve all keys (i.e., millon or more keys) on production environment will result in performance issue due to blocking nature of long running request on Single threaded Redis server. So, latest Redis offers methods like `scan()` or `scanStream()` to query Redis items incrementally in a paginated way i.e., by requesting `n` items on each request.
 
-The number of items to query on each request can be configured by accessing `Redis Xplorer: Max. number of items to fetch per request` from the command palatte (`Ctrl + Shift + P`).
+The number of items to query on each request can be configured based on your Redis server capacity by accessing `Redis Xplorer: Max. number of items to fetch per request` from the command palatte (`Ctrl + Shift + P`).
 
 ![Redis item actions](images/redis-scan-items-count.jpg)
 
 ## Configurations
 
-This extension saves all your configured profiles under currently opened folder/workspace.
+This extension persists all your configured connection profiles, under currently opened folder/workspace.
 
 i.e., using `.vscode/settings.json`.
 
