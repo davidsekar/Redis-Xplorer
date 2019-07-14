@@ -21,42 +21,44 @@
   ],
   "main": "./dist/extension",
   "contributes": {
-    "configuration": [{
-      "title": "Redis Xplorer Configuration",
-      "properties": {
-        "redisXplorer.config": {
-          "type": "object",
-          "description": "Redis server connection configuration & profiles",
-          "properties": {
-            "scanLimit": {
-              "type": "number",
-              "description": "Number of items to scan on each request to Redis server"
-            },
-            "profiles": {
-              "type": "array",
-              "description": "Redis connection profiles",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "name": {
-                    "type": "string",
-                    "description": "Profile nick name"
-                  },
-                  "host": {
-                    "type": "string",
-                    "description": "Redis server/host name"
-                  },
-                  "accessKey": {
-                    "type": "string",
-                    "description": "Password to authenticate"
-                  },
-                  "filter": {
-                    "type": "string",
-                    "description": "Pattern to filter redis keys"
-                  },
-                  "port": {
-                    "type": "string",
-                    "description": "Port number to connect on the Redis server"
+    "configuration": [
+      {
+        "title": "Redis Xplorer Configuration",
+        "properties": {
+          "redisXplorer.config": {
+            "type": "object",
+            "description": "Redis server connection configuration & profiles",
+            "properties": {
+              "scanLimit": {
+                "type": "number",
+                "description": "Number of items to scan on each request to Redis server"
+              },
+              "profiles": {
+                "type": "array",
+                "description": "Redis connection profiles",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string",
+                      "description": "Profile nick name"
+                    },
+                    "host": {
+                      "type": "string",
+                      "description": "Redis server/host name"
+                    },
+                    "accessKey": {
+                      "type": "string",
+                      "description": "Password to authenticate"
+                    },
+                    "filter": {
+                      "type": "string",
+                      "description": "Pattern to filter redis keys"
+                    },
+                    "port": {
+                      "type": "string",
+                      "description": "Port number to connect on the Redis server"
+                    }
                   }
                 }
               }
@@ -64,15 +66,18 @@
           }
         }
       }
-    }],
+    ],
     "views": {
-      "explorer": [{
-        "id": "redisXplorer",
-        "name": "Redis Xplorer"
-      }]
+      "explorer": [
+        {
+          "id": "redisXplorer",
+          "name": "Redis Xplorer"
+        }
+      ]
     },
     "menus": {
-      "view/item/context": [{
+      "view/item/context": [
+        {
           "command": "config.commands.redisServer.delItem",
           "when": "view == redisXplorer && viewItem == redisNode",
           "group": "inline"
@@ -109,7 +114,8 @@
         }
       ]
     },
-    "commands": [{
+    "commands": [
+      {
         "command": "config.commands.redisServer",
         "title": "Redis Xplorer: Add new redis server connection profile"
       },
@@ -201,10 +207,10 @@
     "typescript": "^3.5.3",
     "vscode-test": "^1.0.0",
     "webpack": "^4.35.3",
-    "webpack-cli": "^3.3.5"
+    "webpack-cli": "^3.3.6"
   },
   "dependencies": {
-    "ioredis": "^4.11.1",
+    "ioredis": "^4.11.2",
     "lodash": "^4.17.14"
   },
   "repository": {
