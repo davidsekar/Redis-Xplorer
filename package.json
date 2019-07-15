@@ -83,16 +83,6 @@
           "group": "inline"
         },
         {
-          "command": "config.commands.redisServer.delAllItems",
-          "when": "view == redisXplorer && viewItem == redisServerNode",
-          "group": "inline"
-        },
-        {
-          "command": "config.commands.redisServer.refreshServerItem",
-          "when": "view == redisXplorer && viewItem == redisServerNode",
-          "group": "inline"
-        },
-        {
           "command": "config.commands.redisServer.addItem",
           "when": "view == redisXplorer && viewItem == redisServerNode",
           "group": "inline"
@@ -109,6 +99,16 @@
         },
         {
           "command": "config.commands.redisServer.edit",
+          "when": "view == redisXplorer && viewItem == redisServerNode",
+          "group": "inline"
+        },
+        {
+          "command": "config.commands.redisServer.refreshServerItem",
+          "when": "view == redisXplorer && viewItem == redisServerNode",
+          "group": "inline"
+        },
+        {
+          "command": "config.commands.redisServer.delAllItems",
           "when": "view == redisXplorer && viewItem == redisServerNode",
           "group": "inline"
         }
@@ -173,10 +173,10 @@
       },
       {
         "command": "config.commands.redisServer.delAllItems",
-        "title": "(WARN) Flush entire REDIS",
+        "title": "(WARN) Flush entire Redis",
         "icon": {
-          "light": "resources/light/baseline_layers_clear_black_18dp.png",
-          "dark": "resources/dark/baseline_layers_clear_white_18dp.png"
+          "light": "resources/light/baseline_clear_all_black_18dp.png",
+          "dark": "resources/dark/baseline_clear_all_white_18dp.png"
         }
       }
     ]
