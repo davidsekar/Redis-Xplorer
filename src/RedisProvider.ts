@@ -60,27 +60,11 @@ export class RedisProvider implements vscode.TreeDataProvider<Entry> {
     result.dataType = typeof result.value;
     result.iconType = element.iconType;
 
+    let iconFile = element.type === ItemType.Server ? "folder.svg" : "key.svg";
+
     treeItem.iconPath = {
-      light: path.join(
-        __filename,
-        "..",
-        "..",
-        "resources",
-        "light",
-        element.type === ItemType.Server
-          ? "baseline_device_hub_black_18dp.png"
-          : "baseline_web_asset_black_18dp.png"
-      ),
-      dark: path.join(
-        __filename,
-        "..",
-        "..",
-        "resources",
-        "dark",
-        element.type === ItemType.Server
-          ? "baseline_device_hub_white_18dp.png"
-          : "baseline_web_asset_white_18dp.png"
-      )
+      light: path.join(__filename, "..", "..",  "..", "..", "resources", "light", iconFile),
+      dark: path.join(__filename, "..", "..",  "..", "..", "resources", "dark", iconFile)
     };
 
     treeItem.command = {

@@ -1,6 +1,7 @@
 import * as vscode from "vscode";
 import { XplorerConfig, XplorerProfiles } from "./model";
 import { remove, isEmpty, isNil, each, find, cloneDeep } from "lodash";
+import { Constants } from "./enum";
 
 /**
  * Helper class to manage the vscode workspace configuration
@@ -95,6 +96,11 @@ export class ConfigHelper {
         let clonedXConfig = cloneDeep(xconfig);
         clonedXConfig.scanLimit = limit;
         await this.saveXplorerConfig(clonedXConfig);
+    }
+
+    public async getRedisScanLimit() {
+        let xconfig = await this.getXConfig();
+        return xconfig.scanLimit || Constants.RedisScanLimit;
     }
 
     /**

@@ -17,13 +17,14 @@ export enum Message {
     InfoPortNumber = 'Please provide port number ',
     InfoInvalidPortNumber = 'Please provide a valid port number ',
     InfoInvalidScanLimit = 'Please provide a valid number',
-    InfoRedisPassword = 'Please provide Redis password ',
+    InfoRedisPassword = 'Connect to Redis server without password',
     InfoNoData = 'No Data',
+    InfoProfileNotSaved = 'Profile not saved',
 
     PlaceholderDisplayName = 'enter a nick name',
     PlaceholderHostserver = 'server.redis.cache.windows.net',
     PlaceholderPortNumber = 'e.g., SSL: 6380; Non-SSL:6379; Or any custom port number',
-    PlaceholderPassword = 'URL-Safe Hashed password',
+    PlaceholderPassword = 'No Password (Leave it empty)',
     PlaceholderRedisScanLimit = 'Specifying a large number causes performance issue in production (Default: 200)',
 
     ProgressInitiate = 'Initiate',

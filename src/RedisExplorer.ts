@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import { isNil, isUndefined, toNumber, isNumber } from "lodash";
+import { isNil, isUndefined, toNumber, isNumber, trim } from "lodash";
 import { writeFile, readFile, unlink } from "fs";
 
 import { Entry, XplorerProfiles } from "./model";
@@ -15,7 +15,9 @@ export class RedisXplorer {
   lastAccessedNode!: Entry;
   configHelper: ConfigHelper;
 
-  constructor() {
+  constructor(context: vscode.ExtensionContext) {
+    console.debug(context.storagePath);
+
     // Clean-up temp file
     unlink(`${vscode.workspace.rootPath}/${tempOutputFile}`, err => { if (err) { console.log(err); return; } });
     this.configHelper = new ConfigHelper();
@@ -35,11 +37,19 @@ export class RedisXplorer {
     });
 
     vscode.commands.registerCommand(Command.ConfigureScanLimit, async () => {
+      let currentScanLimit = await this.configHelper.getRedisScanLimit();
       const scanLimit = await vscode.window.showInputBox({
-        prompt: Message.PromptRedisScanLimit
+        prompt: Message.PromptRedisScanLimit,
+        value: currentScanLimit + '',
+        placeHolder: Message.PlaceholderRedisScanLimit
       });
 
-      if (isNil(scanLimit) || scanLimit === '') {
+      if (isNil(scanLimit)) {
+        return;
+      }
+
+      if (scanLimit === '') {
+        vscode.window.showInformationMessage(Message.InfoInvalidScanLimit);
         return;
       }
 
@@ -195,7 +205,7 @@ export class RedisXplorer {
       return;
     }
 
-    if (profileName === '') {
+    if (trim(profileName) === '') {
       vscode.window.showInformationMessage(Message.InfoDisplayName);
       return;
     }
@@ -208,7 +218,7 @@ export class RedisXplorer {
     }
 
     let hostName = await vscode.window.showInputBox(inputOptions);
-    if (isNil(hostName) || hostName === "") {
+    if (isNil(hostName) || trim(hostName) === "") {
       vscode.window.showInformationMessage(Message.InfoHostServer);
       return;
     }
@@ -225,7 +235,7 @@ export class RedisXplorer {
     }
 
     let portNumber = await vscode.window.showInputBox(inputOptions);
-    if (isNil(portNumber) || portNumber === "") {
+    if (isNil(portNumber) || trim(portNumber) === "") {
       vscode.window.showInformationMessage(Message.InfoPortNumber);
       return;
     } else {
@@ -244,11 +254,13 @@ export class RedisXplorer {
       inputOptions.valueSelection = undefined;
     }
 
-    const password = await vscode.window.showInputBox(inputOptions);
-    if (isNil(password) || password === "") {
-      vscode.window.showInformationMessage(Message.InfoRedisPassword);
+    let password = await vscode.window.showInputBox(inputOptions);
+    if (isNil(password)) {
+      vscode.window.showInformationMessage(Message.InfoProfileNotSaved);
       return;
     }
+
+    password = trim(password);
 
     this.configHelper.addOrUpdateConfig(profileName, hostName, portNumber, password, oldProfileName).then(() => this.treeDataProvider.refresh(profileName!));
   }

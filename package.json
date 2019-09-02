@@ -4,13 +4,14 @@
   "description": "Connect to multiple Redis servers simultaneously (TLS supported). Perform simple read, write & filter keys operations with ease.",
   "version": "1.2.5",
   "publisher": "Davidsekar",
+  "enableProposedApi": true,
   "author": {
     "name": "David Gnanasekaran",
     "email": "c.davidgnanasekaran@gmail.com"
   },
   "icon": "images/redis.png",
   "engines": {
-    "vscode": "^1.30.0"
+    "vscode": "^1.37.0"
   },
   "categories": [
     "Other"
@@ -21,44 +22,42 @@
   ],
   "main": "./dist/extension",
   "contributes": {
-    "configuration": [
-      {
-        "title": "Redis Xplorer Configuration",
-        "properties": {
-          "redisXplorer.config": {
-            "type": "object",
-            "description": "Redis server connection configuration & profiles",
-            "properties": {
-              "scanLimit": {
-                "type": "number",
-                "description": "Number of items to scan on each request to Redis server"
-              },
-              "profiles": {
-                "type": "array",
-                "description": "Redis connection profiles",
-                "items": {
-                  "type": "object",
-                  "properties": {
-                    "name": {
-                      "type": "string",
-                      "description": "Profile nick name"
-                    },
-                    "host": {
-                      "type": "string",
-                      "description": "Redis server/host name"
-                    },
-                    "accessKey": {
-                      "type": "string",
-                      "description": "Password to authenticate"
-                    },
-                    "filter": {
-                      "type": "string",
-                      "description": "Pattern to filter redis keys"
-                    },
-                    "port": {
-                      "type": "string",
-                      "description": "Port number to connect on the Redis server"
-                    }
+    "configuration": [{
+      "title": "Redis Xplorer Configuration",
+      "properties": {
+        "redisXplorer.config": {
+          "type": "object",
+          "description": "Redis server connection configuration & profiles",
+          "properties": {
+            "scanLimit": {
+              "type": "number",
+              "description": "Number of items to scan on each request to Redis server"
+            },
+            "profiles": {
+              "type": "array",
+              "description": "Redis connection profiles",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "Profile nick name"
+                  },
+                  "host": {
+                    "type": "string",
+                    "description": "Redis server/host name"
+                  },
+                  "accessKey": {
+                    "type": "string",
+                    "description": "Password to authenticate"
+                  },
+                  "filter": {
+                    "type": "string",
+                    "description": "Pattern to filter redis keys"
+                  },
+                  "port": {
+                    "type": "string",
+                    "description": "Port number to connect on the Redis server"
                   }
                 }
               }
@@ -66,24 +65,30 @@
           }
         }
       }
-    ],
+    }],
     "views": {
-      "explorer": [
-        {
-          "id": "redisXplorer",
-          "name": "Redis Xplorer"
-        }
-      ]
+      "explorer": [{
+        "id": "redisXplorer",
+        "name": "Redis Xplorer"
+      }]
     },
     "menus": {
-      "view/item/context": [
-        {
-          "command": "config.commands.redisServer.delItem",
-          "when": "view == redisXplorer && viewItem == redisNode",
+      "view/title": [{
+        "command": "config.commands.redisServer",
+        "when": "view == redisXplorer",
+        "group": "navigation"
+      }, {
+        "command": "config.commands.redisServer.scanLimit",
+        "when": "view == redisXplorer",
+        "group": "navigation"
+      }],
+      "view/item/context": [{
+          "command": "config.commands.redisServer.addItem",
+          "when": "view == redisXplorer && viewItem == redisServerNode",
           "group": "inline"
         },
         {
-          "command": "config.commands.redisServer.addItem",
+          "command": "config.commands.redisServer.edit",
           "when": "view == redisXplorer && viewItem == redisServerNode",
           "group": "inline"
         },
@@ -98,11 +103,6 @@
           "group": "inline"
         },
         {
-          "command": "config.commands.redisServer.edit",
-          "when": "view == redisXplorer && viewItem == redisServerNode",
-          "group": "inline"
-        },
-        {
           "command": "config.commands.redisServer.refreshServerItem",
           "when": "view == redisXplorer && viewItem == redisServerNode",
           "group": "inline"
@@ -111,85 +111,100 @@
           "command": "config.commands.redisServer.delAllItems",
           "when": "view == redisXplorer && viewItem == redisServerNode",
           "group": "inline"
+        },
+        {
+          "command": "config.commands.redisServer.delItem",
+          "when": "view == redisXplorer && viewItem == redisNode",
+          "group": "inline"
         }
-      ]
+      ],
+      "commandPalette": [{
+        "command": "config.commands.redisServer"
+      }]
     },
-    "commands": [
-      {
+    "commands": [{
         "command": "config.commands.redisServer",
-        "title": "Redis Xplorer: Add new redis server connection profile"
+        "category": "Redis Xplorer",
+        "title": "Add new profile",
+        "icon": {
+          "light": "resources/light/add.svg",
+          "dark": "resources/dark/add.svg"
+        }
       },
       {
         "command": "config.commands.redisServer.scanLimit",
-        "title": "Redis Xplorer: Max. number of items to fetch per request"
+        "category": "Redis Xplorer",
+        "title": "Max. number of items to fetch per request",
+        "icon": {
+          "light": "resources/light/concurrency_setting.svg",
+          "dark": "resources/dark/concurrency_setting.svg"
+        }
       },
       {
         "command": "config.commands.redisServer.edit",
-        "title": "Edit selected redis server info.",
+        "title": "Edit profile",
         "icon": {
-          "light": "resources/light/baseline_edit_black_18dp.png",
-          "dark": "resources/dark/baseline_edit_white_18dp.png"
+          "light": "resources/light/edit.svg",
+          "dark": "resources/dark/edit.svg"
         }
       },
       {
         "command": "config.commands.redisServer.delItem",
-        "title": "Delete this redis item",
+        "title": "Delete key",
         "icon": {
-          "light": "resources/light/baseline_delete_forever_black_18dp.png",
-          "dark": "resources/dark/baseline_delete_forever_white_18dp.png"
+          "light": "resources/light/delete.svg",
+          "dark": "resources/dark/delete.svg"
         }
       },
       {
         "command": "config.commands.redisServer.delServerItem",
-        "title": "Delete this connection profile",
+        "title": "Delete profile",
         "icon": {
-          "light": "resources/light/baseline_remove_black_18dp.png",
-          "dark": "resources/dark/baseline_remove_white_18dp.png"
+          "light": "resources/light/remove_profile.svg",
+          "dark": "resources/dark/remove_profile.svg"
         }
       },
       {
         "command": "config.commands.redisServer.addItem",
-        "title": "Add Redis Item",
+        "title": "Add new key",
         "icon": {
-          "light": "resources/light/baseline_add_black_18dp.png",
-          "dark": "resources/dark/baseline_add_white_18dp.png"
+          "light": "resources/light/add.svg",
+          "dark": "resources/dark/add.svg"
         }
       },
       {
         "command": "config.commands.redisServer.refreshServerItem",
-        "title": "Refresh Redis Connection",
+        "title": "Refresh all keys",
         "icon": {
-          "light": "resources/light/baseline_refresh_black_18dp.png",
-          "dark": "resources/dark/baseline_refresh_white_18dp.png"
+          "light": "resources/light/refresh.svg",
+          "dark": "resources/dark/refresh.svg"
         }
       },
       {
         "command": "config.commands.redisServer.filterServerItem",
         "title": "Filter keys by name",
         "icon": {
-          "light": "resources/light/baseline_filter_list_black_18dp.png",
-          "dark": "resources/dark/baseline_filter_list_white_18dp.png"
+          "light": "resources/light/filter_list.svg",
+          "dark": "resources/dark/filter_list.svg"
         }
       },
       {
         "command": "config.commands.redisServer.delAllItems",
-        "title": "(WARN) Flush entire Redis",
+        "title": "Remove all keys under this profile",
         "icon": {
-          "light": "resources/light/baseline_clear_all_black_18dp.png",
-          "dark": "resources/dark/baseline_clear_all_white_18dp.png"
+          "light": "resources/light/delete_all.svg",
+          "dark": "resources/dark/delete_all.svg"
         }
       }
     ]
   },
   "scripts": {
     "vscode:prepublish": "webpack --mode production",
-    "start": "npm run webpack -- --watch",
     "webpack": "webpack --mode development",
     "webpack-dev": "webpack --mode development --watch",
     "compile": "tsc -p ./",
-    "watch": "tsc -watch -p ./",
+    "test-compile": "tsc -p ./tsconfig-test.json",
     "lint": "tslint -p ./",
-    "pretest": "npm run compile",
     "test": "node ./out/test/runTest.js",
     "publish": "vsce package && vsce publish"
   },
@@ -198,16 +213,16 @@
     "@types/ioredis": "^4.0.13",
     "@types/lodash": "^4.14.136",
     "@types/mocha": "^5.2.7",
-    "@types/node": "^8.10.50",
-    "@types/vscode": "^1.30.0",
+    "@types/node": "^10.12.21",
+    "@types/vscode": "^1.37.0",
     "glob": "^7.1.4",
     "mocha": "^6.1.4",
     "ts-loader": "^6.0.4",
-    "tslint": "^5.18.0",
+    "tslint": "^5.19.0",
     "typescript": "^3.5.3",
-    "vscode-test": "^1.0.0",
-    "webpack": "^4.35.3",
-    "webpack-cli": "^3.3.6"
+    "vscode-test": "^1.2.0",
+    "webpack": "^4.39.3",
+    "webpack-cli": "^3.3.7"
   },
   "dependencies": {
     "ioredis": "^4.11.2",
