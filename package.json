@@ -4,7 +4,6 @@
   "description": "Connect to multiple Redis servers simultaneously (TLS supported). Perform simple read, write & filter keys operations with ease.",
   "version": "1.2.6",
   "publisher": "Davidsekar",
-  "enableProposedApi": true,
   "author": {
     "name": "David Gnanasekaran",
     "email": "c.davidgnanasekaran@gmail.com"
