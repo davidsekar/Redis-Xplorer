@@ -2,7 +2,7 @@
   "name": "redis-xplorer",
   "displayName": "Redis Xplorer",
   "description": "Connect to multiple Redis servers simultaneously (TLS supported). Perform simple read, write & filter keys operations with ease.",
-  "version": "1.2.5",
+  "version": "1.2.6",
   "publisher": "Davidsekar",
   "enableProposedApi": true,
   "author": {
@@ -22,42 +22,44 @@
   ],
   "main": "./dist/extension",
   "contributes": {
-    "configuration": [{
-      "title": "Redis Xplorer Configuration",
-      "properties": {
-        "redisXplorer.config": {
-          "type": "object",
-          "description": "Redis server connection configuration & profiles",
-          "properties": {
-            "scanLimit": {
-              "type": "number",
-              "description": "Number of items to scan on each request to Redis server"
-            },
-            "profiles": {
-              "type": "array",
-              "description": "Redis connection profiles",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "name": {
-                    "type": "string",
-                    "description": "Profile nick name"
-                  },
-                  "host": {
-                    "type": "string",
-                    "description": "Redis server/host name"
-                  },
-                  "accessKey": {
-                    "type": "string",
-                    "description": "Password to authenticate"
-                  },
-                  "filter": {
-                    "type": "string",
-                    "description": "Pattern to filter redis keys"
-                  },
-                  "port": {
-                    "type": "string",
-                    "description": "Port number to connect on the Redis server"
+    "configuration": [
+      {
+        "title": "Redis Xplorer Configuration",
+        "properties": {
+          "redisXplorer.config": {
+            "type": "object",
+            "description": "Redis server connection configuration & profiles",
+            "properties": {
+              "scanLimit": {
+                "type": "number",
+                "description": "Number of items to scan on each request to Redis server"
+              },
+              "profiles": {
+                "type": "array",
+                "description": "Redis connection profiles",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string",
+                      "description": "Profile nick name"
+                    },
+                    "host": {
+                      "type": "string",
+                      "description": "Redis server/host name"
+                    },
+                    "accessKey": {
+                      "type": "string",
+                      "description": "Password to authenticate"
+                    },
+                    "filter": {
+                      "type": "string",
+                      "description": "Pattern to filter redis keys"
+                    },
+                    "port": {
+                      "type": "string",
+                      "description": "Port number to connect on the Redis server"
+                    }
                   }
                 }
               }
@@ -65,24 +67,30 @@
           }
         }
       }
-    }],
+    ],
     "views": {
-      "explorer": [{
-        "id": "redisXplorer",
-        "name": "Redis Xplorer"
-      }]
+      "explorer": [
+        {
+          "id": "redisXplorer",
+          "name": "Redis Xplorer"
+        }
+      ]
     },
     "menus": {
-      "view/title": [{
-        "command": "config.commands.redisServer",
-        "when": "view == redisXplorer",
-        "group": "navigation"
-      }, {
-        "command": "config.commands.redisServer.scanLimit",
-        "when": "view == redisXplorer",
-        "group": "navigation"
-      }],
-      "view/item/context": [{
+      "view/title": [
+        {
+          "command": "config.commands.redisServer",
+          "when": "view == redisXplorer",
+          "group": "navigation"
+        },
+        {
+          "command": "config.commands.redisServer.scanLimit",
+          "when": "view == redisXplorer",
+          "group": "navigation"
+        }
+      ],
+      "view/item/context": [
+        {
           "command": "config.commands.redisServer.addItem",
           "when": "view == redisXplorer && viewItem == redisServerNode",
           "group": "inline"
@@ -118,11 +126,14 @@
           "group": "inline"
         }
       ],
-      "commandPalette": [{
-        "command": "config.commands.redisServer"
-      }]
+      "commandPalette": [
+        {
+          "command": "config.commands.redisServer"
+        }
+      ]
     },
-    "commands": [{
+    "commands": [
+      {
         "command": "config.commands.redisServer",
         "category": "Redis Xplorer",
         "title": "Add new profile",
