@@ -44,22 +44,70 @@ class RedisHandler {
     return false;
   }
 
+  /**
+   * This function returns a string representation of current selected redis key based on its datatype
+   * @param key redis key
+   */
   getValue(key: string): Promise<any> {
     if (!this.isConnected) { return Promise.reject(); }
 
     return new Promise<any>((resolve, reject) => {
-      this.redisClient.hgetall(`${key}`, (error: any, result: any[]) => {
-        if (error) {
-          this.redisClient.get(`${key}`, (error: any, singleResult: any) => {
-            if (error) {
-              console.log(error);
-              reject();
-            }
-            resolve(singleResult);
-          });
-          return;
+      this.redisClient.type(key, (err, res) => {
+        console.log(res);
+        switch (res) {
+          case "string":
+            this.redisClient.get(key, (error, result) => {
+              if (error) {
+                console.log(error);
+                reject();
+              }
+              resolve(result);
+            });
+            break;
+          case "list":
+            this.redisClient.lrange(key, 0, 1000, (error, result) => {
+              if (error) {
+                console.log(error);
+                reject();
+              }
+              resolve(result);
+            });
+            break;
+          case "set":
+            this.redisClient.smembers(key, (error, result) => {
+              if (error) {
+                console.log(error);
+                reject();
+              }
+              resolve(result);
+            });
+            break;
+          case "zset":
+            this.redisClient.zrange(key, 0, 1000, "WITHSCORES", (error, result) => {
+              if (error) {
+                console.log(error);
+                reject();
+              }
+              resolve(result);
+            });
+            break;
+          case "hash":
+            this.redisClient.hgetall(`${key}`, (error: any, result: any[]) => {
+              if (error) {
+                console.log(error);
+                reject();
+              }
+              resolve(JSON.stringify(result));
+            });
+            break;
+          case "stream":
+            resolve(this.redisClient.xrange(key, "-", "+"));
+            break;
+          default:
+            console.warn("Unknown data type!");
+            reject();
+            break;
         }
-        resolve(result);
       });
     }).catch(e => {
       console.log(e);
@@ -138,20 +186,30 @@ class RedisHandler {
     });
   }
 
-  setObject(key: string, value: any) {
-    if (!this.isConnected) { return; }
-    let keys = Object.keys(value);
-    let convertArr = [];
-    for (let key of keys) {
-      convertArr.push(key);
-      convertArr.push(value[key]);
-    }
-    this.redisClient.hmset(key, convertArr);
-  }
+  /**
+   * This function sets the value for the provided redis key
+   * @param key redis key
+   * @param value value to set for the provided key
+   */
+  setValue(key: string, value: any): Promise<boolean> {
+    if (!this.isConnected) { return Promise.reject(); }
 
-  setValue(key: string, value: string) {
-    if (!this.isConnected) { return; }
-    this.redisClient.set(key, value);
+    return new Promise<boolean>((resolve, reject) => {
+      this.redisClient.type(key, (error, result) => {
+        switch (result) {
+          case "string":
+            this.redisClient.set(key, value);
+            resolve(true);
+            break;
+          default:
+            console.warn("Set method not implemented for data type => " + result);
+            reject();
+            break;
+        }
+      });
+    }).catch(() => {
+      return false;
+    });
   }
 
   delete(key: string) {

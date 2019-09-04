@@ -164,8 +164,10 @@ export class RedisXplorer {
           console.debug(err.message);
           return;
         }
-        this.treeDataProvider.setRedisValue(this.lastAccessedNode.key, data, this.lastAccessedNode.serverName);
-        this.treeDataProvider.refresh(this.lastAccessedNode.serverName);
+        this.treeDataProvider.setRedisValue(this.lastAccessedNode.key, data, this.lastAccessedNode.serverName).then((result) => {
+          console.log("setRedisValue() => " + (result ? "succeeded" : "failed"));
+          // this.treeDataProvider.refresh(this.lastAccessedNode.serverName);
+        });
       });
     });
 

@@ -63,8 +63,8 @@ export class RedisProvider implements vscode.TreeDataProvider<Entry> {
     let iconFile = element.type === ItemType.Server ? "folder.svg" : "key.svg";
 
     treeItem.iconPath = {
-      light: path.join(__filename, "..", "..",  "..", "..", "resources", "light", iconFile),
-      dark: path.join(__filename, "..", "..",  "..", "..", "resources", "dark", iconFile)
+      light: path.join(__filename, "..", "..", "resources", "light", iconFile),
+      dark: path.join(__filename, "..", "..", "resources", "dark", iconFile)
     };
 
     treeItem.command = {
@@ -122,12 +122,8 @@ export class RedisProvider implements vscode.TreeDataProvider<Entry> {
     return children;
   }
 
-  setRedisValue(key: string, value: string, connKey: string) {
-    this.getRedisHandler(connKey).setValue(key, value);
-  }
-
-  setRedisObject(key: string, value: any, connKey: string) {
-    this.getRedisHandler(connKey).setObject(key, value);
+  async setRedisValue(key: string, value: any, connKey: string): Promise<boolean> {
+    return await this.getRedisHandler(connKey).setValue(key, value);
   }
 
   setRedisScanLimit(limit: number) {
