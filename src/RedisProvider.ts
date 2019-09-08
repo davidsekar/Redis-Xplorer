@@ -1,5 +1,6 @@
 import * as vscode from "vscode";
 import RedisHandler from "./RedisHandler";
+import { Helper } from "./Helper";
 import * as path from "path";
 import { XplorerProfiles, XplorerConfig, Entry } from "./model";
 import { isNil, find, unset } from "lodash";
@@ -9,8 +10,8 @@ export class RedisProvider implements vscode.TreeDataProvider<Entry> {
   private redisHandler: { [key: string]: RedisHandler };
   private _onDidChangeTreeData: vscode.EventEmitter<any> = new vscode.EventEmitter<any>();
   private scanLimit: number;
-  readonly onDidChangeTreeData: vscode.Event<any> = this._onDidChangeTreeData
-    .event;
+  private helper = new Helper();
+  readonly onDidChangeTreeData: vscode.Event<any> = this._onDidChangeTreeData.event;
 
   constructor() {
     this.redisHandler = {};
@@ -42,9 +43,7 @@ export class RedisProvider implements vscode.TreeDataProvider<Entry> {
 
     let treeItem = new vscode.TreeItem(
       element.key,
-      element.type === ItemType.Server
-        ? vscode.TreeItemCollapsibleState.Collapsed
-        : vscode.TreeItemCollapsibleState.None
+      element.type === ItemType.Server ? vscode.TreeItemCollapsibleState.Collapsed : vscode.TreeItemCollapsibleState.None
     );
 
     let result = new Entry();
@@ -63,8 +62,8 @@ export class RedisProvider implements vscode.TreeDataProvider<Entry> {
     let iconFile = element.type === ItemType.Server ? "folder.svg" : "key.svg";
 
     treeItem.iconPath = {
-      light: path.join(__filename, "..", "..", "resources", "light", iconFile),
-      dark: path.join(__filename, "..", "..", "resources", "dark", iconFile)
+      light: this.helper.Path("resources", "light", iconFile),
+      dark: this.helper.Path("resources", "dark", iconFile)
     };
 
     treeItem.command = {
@@ -94,7 +93,7 @@ export class RedisProvider implements vscode.TreeDataProvider<Entry> {
           node.type = ItemType.Server;
           node.iconType = ItemType.Server;
           node.serverName = curValue.name;
-          node.value = 'redis://:' + curValue.accessKey + '@' + curValue.host;
+          node.value = this.getRedisConnectionString(curValue.host, curValue.accessKey, curValue.port);
           node.dataType = typeof node.value;
           node.filter = curValue.filter || '*';
           children.push(node);
@@ -155,26 +154,45 @@ export class RedisProvider implements vscode.TreeDataProvider<Entry> {
           if (connectProfile) {
             console.log("Redis connect to : ", connectProfile.host);
 
-            let portNumber = connectProfile.port || Constants.RedisDefaultPortNo;
-            let url = '';
+            let portNumber = this.getRedisPortNumber(connectProfile.port);
+            let url = this.getRedisConnectionString(connectProfile.host, connectProfile.accessKey, portNumber);
 
             if (portNumber === Constants.RedisSslPortNo) {
-              url += "rediss://";
               this.redisHandler[connKey].setTlsOn();
-            } else {
-              url += "redis://";
             }
 
-            if (connectProfile.accessKey !== '') {
-              url += ':' + connectProfile.accessKey + "@";
-            }
-
-            url += connectProfile.host + ":" + portNumber;
             this.redisHandler[connKey].connect(url).then(() => { this.refresh(connKey); });
           }
         }
       }
     }
     return this.redisHandler[connKey];
+  }
+
+  /**
+   * Used to construct redis connection string
+   * @param hostName redis server host name
+   * @param accessKey password for authentication
+   * @param portNumber redis server portnumber to connect
+   */
+  private getRedisConnectionString(hostName: string, accessKey: string, portNumber: string) {
+    portNumber = this.getRedisPortNumber(portNumber);
+    let url = portNumber === Constants.RedisSslPortNo ? "rediss://" : "redis://";
+
+    if (!isNil(accessKey) && accessKey !== '') {
+      url += ':' + accessKey + "@";
+    }
+
+    url += hostName + ":" + portNumber;
+
+    return url;
+  }
+
+  /**
+   * Used to return a proper port number when numbers are empty
+   * @param portNumber portnumber to validate & provide default value for empty string
+   */
+  private getRedisPortNumber(portNumber: string) {
+    return portNumber || Constants.RedisDefaultPortNo;
   }
 }

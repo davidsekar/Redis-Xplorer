@@ -13,11 +13,11 @@
    height="24"
    viewBox="0 0 24 24"
    version="1.1"
-   id="svg6"
+   id="svg8"
    sodipodi:docname="folder.svg"
    inkscape:version="0.92.4 (5da689c313, 2019-01-14)">
   <metadata
-     id="metadata12">
+     id="metadata14">
     <rdf:RDF>
       <cc:Work
          rdf:about="">
@@ -28,19 +28,19 @@
     </rdf:RDF>
   </metadata>
   <defs
-     id="defs10">
+     id="defs12">
     <linearGradient
-       id="linearGradient824"
+       id="linearGradient823"
        osb:paint="solid">
       <stop
          style="stop-color:#ffffff;stop-opacity:1;"
          offset="0"
-         id="stop822" />
+         id="stop821" />
     </linearGradient>
     <linearGradient
        inkscape:collect="always"
-       xlink:href="#linearGradient824"
-       id="linearGradient826"
+       xlink:href="#linearGradient823"
+       id="linearGradient825"
        x1="2"
        y1="12"
        x2="22"
@@ -58,7 +58,7 @@
      inkscape:pageshadow="2"
      inkscape:window-width="1920"
      inkscape:window-height="1013"
-     id="namedview8"
+     id="namedview10"
      showgrid="false"
      inkscape:zoom="9.8333333"
      inkscape:cx="12"
@@ -66,13 +66,17 @@
      inkscape:window-x="-9"
      inkscape:window-y="-9"
      inkscape:window-maximized="1"
-     inkscape:current-layer="svg6" />
+     inkscape:current-layer="svg8" />
   <path
      fill="none"
      d="M0 0h24v24H0V0z"
      id="path2" />
   <path
-     d="M10.59 4.59C10.21 4.21 9.7 4 9.17 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-1.41-1.41z"
-     id="path4"
-     style="fill-opacity:1;fill:url(#linearGradient826)" />
+     opacity=".3"
+     d="M11.17 8l-.58-.59L9.17 6H4v12h16V8h-8z"
+     id="path4" />
+  <path
+     d="M20 6h-8l-2-2H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm0 12H4V6h5.17l1.41 1.41.59.59H20v10z"
+     id="path6"
+     style="fill-opacity:1;fill:url(#linearGradient825)" />
 </svg>
