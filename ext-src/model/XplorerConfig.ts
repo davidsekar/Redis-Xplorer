@@ -1,4 +1,4 @@
-import { XplorerProfiles } from ".";
+import { XplorerProfiles } from "../model";
 import { Constants } from "../enum";
 
 export class XplorerConfig {

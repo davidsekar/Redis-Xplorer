@@ -2,16 +2,18 @@ import * as vscode from "vscode";
 import { isNil, isUndefined, toNumber, isNumber, trim } from "lodash";
 import { writeFile, readFile, unlink } from "fs";
 
-import { Entry, XplorerProfiles } from "./model";
+import { Entry, XplorerProfiles, ActionDetail } from "./model";
 import { RedisProvider } from "./RedisProvider";
+import { RedisEditor } from "./RedisEditor";
 import { ConfigHelper } from "./ConfigHelper";
-import { Command, Constants, Message } from "./enum";
+import { Command, Constants, Message, ActionType } from "./enum";
 
 const tempOutputFile = ".vscode/redis-xplorer.redis";
 
 export class RedisXplorer {
   redisXplorer: vscode.TreeView<Entry>;
   treeDataProvider: RedisProvider;
+  redisEditor: RedisEditor;
   lastAccessedNode!: Entry;
   configHelper: ConfigHelper;
 
@@ -24,6 +26,7 @@ export class RedisXplorer {
     this.treeDataProvider = new RedisProvider();
     this.redisXplorer = vscode.window.createTreeView("redisXplorer", { treeDataProvider: this.treeDataProvider });
     this.setupVsCommands();
+    this.redisEditor = new RedisEditor(context);
   }
 
   /**
@@ -282,7 +285,12 @@ export class RedisXplorer {
         }
         else if (resource.value === '#server#') {
           progress.report({ message: Message.ProgressConnectionInfo, increment: 30 });
-          this.treeDataProvider.getServerNodeInfo(resource.serverName).then(result => this.writeToEditorCallback(result, progress, resolve));
+          this.treeDataProvider.getServerNodeInfo(resource.serverName).then(result => {
+            let actionDetail = new ActionDetail();
+            actionDetail.itemName = resource.serverName;
+            actionDetail.itemData = result;
+            this.redisEditor.postMessage(ActionType.ViewServerInfo, actionDetail);
+          } /*this.writeToEditorCallback(result, progress, resolve)*/);
         }
         else {
           progress.report({ message: Message.ProgressGetValueFor + '`' + resource.value + '`', increment: 30 });

@@ -1,6 +1,8 @@
 import { TestBed, async } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { AppComponent } from './app.component';
+import { MessagingService } from './messaging.service';
+import { GlobalService } from './global.service';
 
 describe('AppComponent', () => {
   beforeEach(async(() => {
@@ -11,6 +13,10 @@ describe('AppComponent', () => {
       declarations: [
         AppComponent
       ],
+      providers: [
+        GlobalService,
+        MessagingService
+      ]
     }).compileComponents();
   }));
 
@@ -20,16 +26,16 @@ describe('AppComponent', () => {
     expect(app).toBeTruthy();
   });
 
-  it(`should have as title 'ngsrc'`, () => {
+  it(`should have as title 'Redis Editor'`, () => {
     const fixture = TestBed.createComponent(AppComponent);
     const app = fixture.debugElement.componentInstance;
-    expect(app.title).toEqual('ngsrc');
+    expect(app.title).toEqual('Redis Editor');
   });
 
-  it('should render title', () => {
+  it('should render action title', () => {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
     const compiled = fixture.debugElement.nativeElement;
-    expect(compiled.querySelector('.content span').textContent).toContain('ngsrc app is running!');
+    expect(compiled.querySelector('.action-title').textContent).toBeTruthy();
   });
 });

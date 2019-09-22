@@ -30,3 +30,15 @@ $ngsrc-theme: mat-light-theme($ngsrc-primary, $ngsrc-accent, $ngsrc-warn);
 
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+body.vscode-light {
+  color: black;
+}
+
+body.vscode-dark {
+  color: white;
+}
+
+body.vscode-high-contrast {
+  color: red;
+}
