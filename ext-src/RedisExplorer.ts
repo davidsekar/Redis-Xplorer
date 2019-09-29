@@ -6,7 +6,7 @@ import { Entry, XplorerProfiles, ActionDetail } from "./model";
 import { RedisProvider } from "./RedisProvider";
 import { RedisEditor } from "./RedisEditor";
 import { ConfigHelper } from "./ConfigHelper";
-import { Command, Constants, Message, ActionType } from "./enum";
+import { Command, Constants, Message, ActionType, DataType } from "./enum";
 
 const tempOutputFile = ".vscode/redis-xplorer.redis";
 
@@ -278,23 +278,45 @@ export class RedisXplorer {
     };
 
     vscode.window.withProgress(vsCodeProgressOptions, (progress) => {
-      progress.report({ message: Message.ProgressInitiate, increment: 0 });
       return new Promise(resolve => {
+        progress.report({ message: Message.ProgressInitiate, increment: 0 });
         if (!resource) {
           this.writeToEditorCallback(Message.InfoNoData, progress, resolve);
         }
         else if (resource.value === '#server#') {
-          progress.report({ message: Message.ProgressConnectionInfo, increment: 30 });
-          this.treeDataProvider.getServerNodeInfo(resource.serverName).then(result => {
+          progress.report({ message: Message.ProgressConnectionInfo + resource.serverName, increment: 30 });
+          this.treeDataProvider.getServerNodeInfo(resource.serverName).then(async result => {
             let actionDetail = new ActionDetail();
             actionDetail.itemName = resource.serverName;
             actionDetail.itemData = result;
-            this.redisEditor.postMessage(ActionType.ViewServerInfo, actionDetail);
-          } /*this.writeToEditorCallback(result, progress, resolve)*/);
+            await this.redisEditor.postMessage(ActionType.ViewServerInfo, actionDetail);
+          }).finally(() => {
+            progress.report({ message: Message.ProgressDone, increment: 100 });
+            resolve();
+          });
         }
         else {
-          progress.report({ message: Message.ProgressGetValueFor + '`' + resource.value + '`', increment: 30 });
-          this.treeDataProvider.getNodeValue(resource.key, resource.serverName).then(result => this.writeToEditorCallback(result, progress, resolve));
+          this.treeDataProvider.getNodeType(resource.key, resource.serverName).then((res) => {
+            progress.report({ message: Message.ProgressGetValueFor + '`' + resource.value + '`', increment: 30 });
+            let actionDetail = new ActionDetail();
+            switch (res) {
+              case DataType.List:
+                this.treeDataProvider.getListNodeValues(resource.key, resource.serverName)
+                  .then(async result => {
+                    actionDetail.itemName = resource.serverName;
+                    actionDetail.itemData = result;
+                    await this.redisEditor.postMessage(ActionType.ViewList, actionDetail);
+                  }).finally(() => {
+                    progress.report({ message: Message.ProgressDone, increment: 100 });
+                    resolve();
+                  });
+                break;
+              default:
+                this.treeDataProvider.getNodeValue(resource.key, resource.serverName)
+                  .then(result => this.writeToEditorCallback(result, progress, resolve));
+                break;
+            }
+          });
         }
       });
     });

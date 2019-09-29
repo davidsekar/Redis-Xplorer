@@ -13,16 +13,20 @@ import { MatGridListModule } from '@angular/material/grid-list';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { MatListModule } from '@angular/material/list';
+import { MatIconModule } from '@angular/material/icon';
 import { GlobalService } from './global.service';
 import { MessagingService } from './messaging.service';
 import { FormsModule } from '@angular/forms';
+import { ListComponent } from './list/list.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     HomeComponent,
     StringEditorComponent,
-    ServerInfoComponent
+    ServerInfoComponent,
+    ListComponent
   ],
   imports: [
     BrowserModule,
@@ -32,7 +36,9 @@ import { FormsModule } from '@angular/forms';
     MatGridListModule,
     MatToolbarModule,
     MatFormFieldModule,
-    MatInputModule
+    MatInputModule,
+    MatListModule,
+    MatIconModule
   ],
   providers: [
     GlobalService,

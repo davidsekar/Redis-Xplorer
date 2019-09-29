@@ -28,7 +28,7 @@ export enum Message {
     PlaceholderRedisScanLimit = 'Specifying a large number causes performance issue in production (Default: 200)',
 
     ProgressInitiate = 'Initiate',
-    ProgressConnectionInfo = 'Connection info.',
+    ProgressConnectionInfo = 'Connection info: ',
     ProgressGetValueFor = 'Get value for ',
     ProgressWriteToFile = 'Write to file',
     ProgressDone = 'Done'

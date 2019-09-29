@@ -1,7 +1,7 @@
-import * as vscode from "vscode";
-import { XplorerConfig, XplorerProfiles } from "./model";
-import { remove, isEmpty, isNil, each, find, cloneDeep } from "lodash";
-import { Constants } from "./enum";
+import * as vscode from 'vscode';
+import { XplorerConfig, XplorerProfiles } from './model';
+import { remove, isEmpty, isNil, each, find, cloneDeep } from 'lodash';
+import { Constants } from './enum';
 
 /**
  * Helper class to manage the vscode workspace configuration
@@ -109,7 +109,7 @@ export class ConfigHelper {
      */
     private async saveXplorerConfig(config: XplorerConfig) {
         await vscode.workspace.getConfiguration().update(
-            "redisXplorer.config",
+            'redisXplorer.config',
             config,
             vscode.ConfigurationTarget.Workspace
         ).then(() => {

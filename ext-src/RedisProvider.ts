@@ -23,12 +23,20 @@ export class RedisProvider implements vscode.TreeDataProvider<Entry> {
     this._onDidChangeTreeData.fire();
   }
 
-  public async getServerNodeInfo(connKey: string): Promise<string> {
+  public async getServerNodeInfo(connKey: string) {
     return await this.getRedisHandler(connKey).getInfo();
   }
 
-  public async getNodeValue(key: string, connKey: string): Promise<string> {
+  public async getNodeValue(key: string, connKey: string) {
     return await this.getRedisHandler(connKey).getValue(key);
+  }
+
+  public async getNodeType(key: string, connKey: string) {
+    return await this.getRedisHandler(connKey).getType(key);
+  }
+
+  public async getListNodeValues(key: string, connKey: string) {
+    return await this.getRedisHandler(connKey).getListValues(key);
   }
 
   public disconnectRedis(connKey: string) {

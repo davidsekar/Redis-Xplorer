@@ -1,5 +1,5 @@
-import { XplorerProfiles } from "../model";
-import { Constants } from "../enum";
+import { XplorerProfiles } from '../model';
+import { Constants } from '../enum';
 
 export class XplorerConfig {
     public profiles: XplorerProfiles[];

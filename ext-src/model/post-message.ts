@@ -1,4 +1,4 @@
-import { ActionType } from "../enum";
+import { ActionType } from '../enum';
 import { ActionDetail } from './action-detail';
 
 export class PostMessage {

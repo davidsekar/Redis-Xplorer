@@ -35,6 +35,9 @@ export class AppComponent implements OnInit, OnDestroy {
       case ActionType.ViewServerInfo:
         actionRoute = RouteName.path_serverinfo;
         break;
+      case ActionType.ViewList:
+        actionRoute = RouteName.path_list;
+        break;
       case ActionType.DisplayText:
         actionRoute = RouteName.path_string;
         break;

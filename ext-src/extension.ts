@@ -1,5 +1,5 @@
-import * as vscode from "vscode";
-import { RedisXplorer } from "./RedisExplorer";
+import * as vscode from 'vscode';
+import { RedisXplorer } from './RedisExplorer';
 
 export function activate(context: vscode.ExtensionContext) {
   // tslint:disable-next-line:no-unused-expression

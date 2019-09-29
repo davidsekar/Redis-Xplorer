@@ -3,3 +3,4 @@ export { Command } from './command';
 export { Message } from './message';
 export { Constants } from './constants';
 export { ActionType } from './action-type';
+export { DataType } from './data-type';

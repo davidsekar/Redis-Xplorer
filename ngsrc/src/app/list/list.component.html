@@ -1,0 +1,11 @@
+<div>
+  <div class="header">Profile Name: {{title}}</div>
+  <div class="content">
+    <mat-list>
+      <mat-list-item *ngFor="let cnt of content">
+        <mat-icon matListIcon>folder</mat-icon>
+        <h3 matLine> {{cnt}} </h3>
+      </mat-list-item>
+    </mat-list>
+  </div>
+</div>

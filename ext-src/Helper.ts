@@ -1,5 +1,5 @@
-import * as path from "path";
-import { workspace, WorkspaceFolder, window } from "vscode";
+import * as path from 'path';
+import { workspace, WorkspaceFolder, window } from 'vscode';
 
 export class Helper {
     private _root: any;
@@ -16,7 +16,7 @@ export class Helper {
         let folders = workspace.workspaceFolders;
         let folder: WorkspaceFolder | undefined = undefined;
         if (!folders) {
-            return "";
+            return '';
         }
 
         folder = folders[0];

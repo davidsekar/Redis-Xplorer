@@ -1,4 +1,5 @@
 import * as Redis from "ioredis";
+import { DataType } from "./enum";
 
 class RedisHandler {
   private redisClient!: Redis.Redis;
@@ -45,6 +46,25 @@ class RedisHandler {
   }
 
   /**
+   * This function returns datatype of the current selected redis key
+   * @param key redis key
+   */
+  getType(key: string): Promise<string> {
+    return this.redisClient.type(key).then((res) => { return res; });
+  }
+
+  /**
+   /**
+   * This function returns list of values retrived from a List datatype
+   * @param key redis key
+   * @param start specify staring index of items to fetch from
+   * @param end specify index of the last item to fetch
+   */
+  getListValues(key: string, start: number = 0, end: number = 1000): Promise<string[]> {
+    return this.redisClient.lrange(key, start, end).then((res) => { return res; });
+  }
+
+  /**
    * This function returns a string representation of current selected redis key based on its datatype
    * @param key redis key
    */
@@ -52,10 +72,10 @@ class RedisHandler {
     if (!this.isConnected) { return Promise.reject(); }
 
     return new Promise<any>((resolve, reject) => {
-      this.redisClient.type(key, (err, res) => {
+      this.getType(key).then((res) => {
         console.log(res);
         switch (res) {
-          case "string":
+          case DataType.String:
             this.redisClient.get(key, (error, result) => {
               if (error) {
                 console.log(error);
@@ -64,7 +84,7 @@ class RedisHandler {
               resolve(result);
             });
             break;
-          case "list":
+          case DataType.List:
             this.redisClient.lrange(key, 0, 1000, (error, result) => {
               if (error) {
                 console.log(error);
@@ -73,7 +93,7 @@ class RedisHandler {
               resolve(result);
             });
             break;
-          case "set":
+          case DataType.Set:
             this.redisClient.smembers(key, (error, result) => {
               if (error) {
                 console.log(error);
@@ -82,7 +102,7 @@ class RedisHandler {
               resolve(result);
             });
             break;
-          case "zset":
+          case DataType.ZSet:
             this.redisClient.zrange(key, 0, 1000, "WITHSCORES", (error, result) => {
               if (error) {
                 console.log(error);
@@ -91,7 +111,7 @@ class RedisHandler {
               resolve(result);
             });
             break;
-          case "hash":
+          case DataType.Hash:
             this.redisClient.hgetall(`${key}`, (error: any, result: any[]) => {
               if (error) {
                 console.log(error);
@@ -100,7 +120,7 @@ class RedisHandler {
               resolve(JSON.stringify(result));
             });
             break;
-          case "stream":
+          case DataType.Stream:
             resolve(this.redisClient.xrange(key, "-", "+"));
             break;
           default:
@@ -108,6 +128,8 @@ class RedisHandler {
             reject();
             break;
         }
+      }, (reason) => {
+        reject(reason);
       });
     }).catch(e => {
       console.log(e);

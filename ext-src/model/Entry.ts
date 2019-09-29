@@ -1,4 +1,4 @@
-import { ItemType } from "../enum";
+import { ItemType } from '../enum';
 
 export class Entry {
     key!: string;
