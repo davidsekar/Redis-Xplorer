@@ -301,15 +301,21 @@ export class RedisXplorer {
             let actionDetail = new ActionDetail();
             switch (res) {
               case DataType.List:
-                this.treeDataProvider.getListNodeValues(resource.key, resource.serverName)
-                  .then(async result => {
-                    actionDetail.itemName = resource.serverName;
-                    actionDetail.itemData = result;
-                    await this.redisEditor.postMessage(ActionType.ViewList, actionDetail);
-                  }).finally(() => {
-                    progress.report({ message: Message.ProgressDone, increment: 100 });
-                    resolve();
-                  });
+                let listLengthPromise = this.treeDataProvider.getListLength(resource.key, resource.serverName);
+                let listItemsPromise = this.treeDataProvider.getListNodeValues(resource.key, resource.serverName);
+                Promise.all([listLengthPromise, listItemsPromise]).then(async results => {
+                  actionDetail.itemName = resource.serverName;
+                  let listResult: RedisListResult = {
+                    count: results[0],
+                    items: results[1]
+                  };
+                  actionDetail.itemData = listResult;
+
+                  await this.redisEditor.postMessage(ActionType.ViewList, actionDetail);
+                }).finally(() => {
+                  progress.report({ message: Message.ProgressDone, increment: 100 });
+                  resolve();
+                });
                 break;
               default:
                 this.treeDataProvider.getNodeValue(resource.key, resource.serverName)

@@ -1,5 +1,6 @@
 export enum Constants {
     RedisDefaultPortNo = '6379',
     RedisSslPortNo = '6380',
-    RedisScanLimit = 200
+    RedisScanLimit = 200,
+    DefaultRedisListItemsLimit = 10
 }

@@ -4,7 +4,7 @@ import { StringEditorComponent } from './string-editor/string-editor.component';
 import { HomeComponent } from './home/home.component';
 import { ServerInfoComponent } from './server-info/server-info.component';
 import { RouteName } from './route-name';
-import { ListComponent } from './list/list.component';
+import { ListComponent, ListEditComponent } from './list';
 
 
 const routes: Routes = [{
@@ -19,6 +19,9 @@ const routes: Routes = [{
 }, {
   path: RouteName.path_list,
   component: ListComponent
+}, {
+  path: RouteName.path_list_edit,
+  component: ListEditComponent
 }
 ];
 
