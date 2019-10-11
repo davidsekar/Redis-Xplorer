@@ -39,6 +39,10 @@ export class RedisProvider implements vscode.TreeDataProvider<Entry> {
     return await this.getRedisHandler(connKey).getListValues(key);
   }
 
+  public async getListLength(key: string, connKey: string) {
+    return await this.getRedisHandler(connKey).getListLength(key);
+  }
+
   public disconnectRedis(connKey: string) {
     this.getRedisHandler(connKey).disconnect();
     unset(this.redisHandler, connKey);

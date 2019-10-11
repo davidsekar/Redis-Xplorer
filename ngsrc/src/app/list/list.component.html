@@ -1,10 +1,21 @@
 <div>
-  <div class="header">Profile Name: {{title}}</div>
+  <div class="header">Profile Name: {{title}} ({{listCount}})</div>
+  <div class="Actions">
+    Actions:<br />
+    <ul>
+      <li>LPOP</li>
+      <li>LPUSH</li>
+      <li>LREM</li>
+      <li>LSET</li>
+      <li>LTRIM</li>
+      <li>RPOP</li>
+      <li>RPUSH</li>
+    </ul>
+  </div>
   <div class="content">
     <mat-list>
-      <mat-list-item *ngFor="let cnt of content">
-        <mat-icon matListIcon>folder</mat-icon>
-        <h3 matLine> {{cnt}} </h3>
+      <mat-list-item *ngFor="let cnt of content; let i = index">
+        <strong matLine> {{cnt}} <a class="edit-btn" [routerLink]="['list-edit']" (click)="onEditClick(cnt, i)">Edit</a></strong>
       </mat-list-item>
     </mat-list>
   </div>

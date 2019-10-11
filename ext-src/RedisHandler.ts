@@ -1,5 +1,5 @@
 import * as Redis from "ioredis";
-import { DataType } from "./enum";
+import { DataType, Constants } from "./enum";
 
 class RedisHandler {
   private redisClient!: Redis.Redis;
@@ -58,10 +58,18 @@ class RedisHandler {
    * This function returns list of values retrived from a List datatype
    * @param key redis key
    * @param start specify staring index of items to fetch from
-   * @param end specify index of the last item to fetch
+   * @param end specify the number of items to fetch
    */
-  getListValues(key: string, start: number = 0, end: number = 1000): Promise<string[]> {
-    return this.redisClient.lrange(key, start, end).then((res) => { return res; });
+  getListValues(key: string, start: number = 0, count: number = Constants.DefaultRedisListItemsLimit): Promise<string[]> {
+    return this.redisClient.lrange(key, start, start + count - 1).then((res) => { return res; });
+  }
+
+  /**
+   * Returns the number of items in a given redis list
+   * @param key redis list name
+   */
+  getListLength(key: string): Promise<number> {
+    return this.redisClient.llen(key).then(res => { return res; });
   }
 
   /**

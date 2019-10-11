@@ -14,11 +14,10 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatListModule } from '@angular/material/list';
-import { MatIconModule } from '@angular/material/icon';
 import { GlobalService } from './global.service';
 import { MessagingService } from './messaging.service';
 import { FormsModule } from '@angular/forms';
-import { ListComponent } from './list/list.component';
+import { ListComponent, ListEditComponent, ListService } from './list';
 
 @NgModule({
   declarations: [
@@ -26,7 +25,8 @@ import { ListComponent } from './list/list.component';
     HomeComponent,
     StringEditorComponent,
     ServerInfoComponent,
-    ListComponent
+    ListComponent,
+    ListEditComponent
   ],
   imports: [
     BrowserModule,
@@ -37,12 +37,12 @@ import { ListComponent } from './list/list.component';
     MatToolbarModule,
     MatFormFieldModule,
     MatInputModule,
-    MatListModule,
-    MatIconModule
+    MatListModule
   ],
   providers: [
     GlobalService,
-    MessagingService
+    MessagingService,
+    ListService
   ],
   bootstrap: [AppComponent]
 })

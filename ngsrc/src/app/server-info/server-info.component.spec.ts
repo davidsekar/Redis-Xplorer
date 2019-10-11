@@ -3,6 +3,7 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { ServerInfoComponent } from './server-info.component';
 import { MessagingService } from '../messaging.service';
 import { GlobalService } from '../global.service';
+import { ActionDetail, PostMessage, ActionType } from '../../external-imports';
 
 describe('ServerInfoComponent', () => {
   beforeEach(async(() => {

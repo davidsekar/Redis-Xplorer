@@ -14,6 +14,7 @@ export class RedisEditor {
     constructor(private context: vscode.ExtensionContext) {
         const ws = vscode.workspace.getConfiguration(undefined, null);
         this.fontFamily = ws.editor.fontFamily;
+        this.createRedisEditor();
     }
 
     public async createRedisEditor() {
@@ -24,7 +25,7 @@ export class RedisEditor {
                 }
                 resolve();
             } else {
-                this.panel = vscode.window.createWebviewPanel('redis-editor', 'Redis Editor', vscode.ViewColumn.Beside, {
+                this.panel = vscode.window.createWebviewPanel('redis-editor', 'Redis Editor', vscode.ViewColumn.Active, {
                     // Enable javascript in the webview
                     enableScripts: true,
                     // And restric the webview to only loading content from our extension's `media` directory.
