@@ -1,4 +1,11 @@
-<div>
-  <div class="header">Profile Name: {{title}}</div>
-  <div class="content" [innerHTML]="content"></div>
+<div class="row">
+  <div class="col">
+      <mat-card>
+          <mat-card-content>
+              <div class="header">Profile Name: {{title}}</div>
+              <div class="content" [innerHTML]="content"></div>
+          </mat-card-content>
+      </mat-card>
+  </div>
 </div>
+

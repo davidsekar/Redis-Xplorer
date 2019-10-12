@@ -13,3 +13,8 @@ interface VscodeMessageData<T> {
 interface Vscode {
   postMessage<T>(message: ProcMessage): void;
 }
+
+interface ICommunicationService {
+  content: any;
+  connectionName: string;
+}

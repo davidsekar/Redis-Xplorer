@@ -23,7 +23,7 @@ export class ListComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.msgSubscription = this.messagingService.actionMessage$.subscribe((msg) => {
       if (msg && msg.data) {
-        this.title = msg.data.itemName;
+        this.title = msg.data.connectionName;
         this.listCount = msg.data.itemData.count;
         this.content = msg.data.itemData.items;
       } else {
@@ -35,8 +35,9 @@ export class ListComponent implements OnInit, OnDestroy {
   }
 
   onEditClick(value: string, index: number) {
-    this.listService.listContent = value;
-    this.listService.listIndex = index + (this.pageNo * this.itemsPerPage);
+    this.listService.content = value;
+    this.listService.index = index + (this.pageNo * this.itemsPerPage);
+    this.listService.connectionName = this.title;
   }
 
   ngOnDestroy() {

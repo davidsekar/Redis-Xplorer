@@ -33,14 +33,14 @@ describe('ServerInfoComponent', () => {
     const msgService: MessagingService = TestBed.get(MessagingService);
 
     const actionDetail = new ActionDetail();
-    actionDetail.itemName = 'Staging';
+    actionDetail.connectionName = 'Staging';
     actionDetail.itemData = 'Test server\n Info';
 
     const message = new PostMessage();
     message.action = ActionType.ViewServerInfo;
     message.data = actionDetail;
 
-    msgService.sendActionMessage(message);
+    msgService.sendActionDetail(message);
     fixture.detectChanges();
   });
 });

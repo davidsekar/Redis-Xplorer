@@ -1,14 +1,11 @@
-
 // Custom Theming for Angular Material
 // For more information: https://material.angular.io/guide/theming
-// @import '~@angular/material/theming';
+@import '~@angular/material/theming';
 // Plus imports for other components in your app.
 
 // Define a custom typography config that overrides the font-family as well as the
 // `headlines` and `body-1` levels.
-// $custom-typography: mat-typography-config(
-//   $font-family: var(--vscode-font-family)
-// );
+$custom-typography: mat-typography-config($font-family: var(--vscode-font-family));
 
 // Override typography CSS classes (e.g., mat-h1, mat-display-1, mat-typography, etc.).
 // @include mat-base-typography($custom-typography);
@@ -17,30 +14,89 @@
 // @include mat-checkbox-typography($custom-typography);
 
 // Override typography for all Angular Material, including mat-base-typography and all components.
-// @include angular-material-typography($custom-typography);
+@include angular-material-typography($custom-typography);
 
 // Include the common styles for Angular Material. We include this here so that you only
 // have to load a single css file for Angular Material in your app.
 // Be sure that you only ever include this mixin once!
 // Override the typography in the core CSS.
-// @include mat-core($custom-typography);
+@include mat-core($custom-typography);
 
 // Define the palettes for your theme using the Material Design palettes available in palette.scss
 // (imported above). For each palette, you can optionally specify a default, lighter, and darker
 // hue. Available color palettes: https://material.io/design/color/
-// $ngsrc-primary: mat-palette($mat-indigo);
-// $ngsrc-accent: mat-palette($mat-pink, A200, A100, A400);
+$ngsrc-light-primary: mat-palette($mat-indigo);
+$ngsrc-light-accent: mat-palette($mat-pink, A200, A100, A400);
 
 // The warn palette is optional (defaults to red).
-// $ngsrc-warn: mat-palette($mat-red);
+$ngsrc-light-warn: mat-palette($mat-red);
 
 // Create the theme object (a Sass map containing all of the palettes).
-// $ngsrc-theme: mat-light-theme($ngsrc-primary, $ngsrc-accent, $ngsrc-warn);
+$ngsrc-lignt-theme: mat-light-theme($ngsrc-light-primary, $ngsrc-light-accent, $ngsrc-light-warn);
 
 // Include theme styles for core and each component used in your app.
 // Alternatively, you can import and @include the theme mixins for each component
 // that you are using.
-// @include angular-material-theme($ngsrc-theme);
+@include angular-material-theme($ngsrc-lignt-theme);
+
+// Define the palettes for your theme using the Material Design palettes available in palette.scss
+// (imported above). For each palette, you can optionally specify a default, lighter, and darker
+// hue. Available color palettes: https://material.io/design/color/
+$ngsrc-dark-primary: mat-palette($mat-indigo);
+$ngsrc-dark-accent: mat-palette($mat-pink, A200, A100, A400);
+
+// The warn palette is optional (defaults to red).
+$ngsrc-dark-warn: mat-palette($mat-red);
+
+$ngsrc-dark-theme: mat-dark-theme($ngsrc-dark-primary, $ngsrc-dark-accent, $ngsrc-dark-warn);
+
+.vscode-dark {
+  // Include theme styles for core and each component used in your app.
+  // Alternatively, you can import and @include the theme mixins for each component
+  // that you are using.
+  @include angular-material-theme($ngsrc-dark-theme);
+}
 
 /* You can add global styles to this file, and also import other style files */
 
+@import "~bootstrap/scss/functions";
+@import "~bootstrap/scss/variables";
+@import "~bootstrap/scss/mixins";
+// @import "~bootstrap/scss/root";
+// @import "~bootstrap/scss/reboot";
+// @import "~bootstrap/scss/type";
+// @import "~bootstrap/scss/images";
+// @import "~bootstrap/scss/code";
+@import "~bootstrap/scss/grid";
+// @import "~bootstrap/scss/tables";
+// @import "~bootstrap/scss/forms";
+// @import "~bootstrap/scss/buttons";
+// @import "~bootstrap/scss/transitions";
+// @import "~bootstrap/scss/dropdown";
+// @import "~bootstrap/scss/button-group";
+// @import "~bootstrap/scss/input-group";
+// @import "~bootstrap/scss/custom-forms";
+// @import "~bootstrap/scss/nav";
+// @import "~bootstrap/scss/navbar";
+// @import "~bootstrap/scss/card";
+// @import "~bootstrap/scss/breadcrumb";
+// @import "~bootstrap/scss/pagination";
+// @import "~bootstrap/scss/badge";
+// @import "~bootstrap/scss/jumbotron";
+// @import "~bootstrap/scss/alert";
+// @import "~bootstrap/scss/progress";
+// @import "~bootstrap/scss/media";
+// @import "~bootstrap/scss/list-group";
+// @import "~bootstrap/scss/close";
+// @import "~bootstrap/scss/toasts";
+// @import "~bootstrap/scss/modal";
+// @import "~bootstrap/scss/tooltip";
+// @import "~bootstrap/scss/popover";
+// @import "~bootstrap/scss/carousel";
+// @import "~bootstrap/scss/spinners";
+// @import "~bootstrap/scss/utilities";
+// @import "~bootstrap/scss/print";
+
+* {
+  box-sizing: border-box;
+}

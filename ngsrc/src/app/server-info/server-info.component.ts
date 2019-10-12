@@ -17,7 +17,7 @@ export class ServerInfoComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.msgSubscription = this.messagingService.actionMessage$.subscribe((msg) => {
       if (msg && msg.data) {
-        this.title = msg.data.itemName;
+        this.title = msg.data.connectionName;
         if (msg.data.itemData) {
           this.content = msg.data.itemData.replace(/\n/ig, '<br/>');
         }

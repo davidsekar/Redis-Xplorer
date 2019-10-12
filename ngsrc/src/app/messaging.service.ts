@@ -9,14 +9,23 @@ export class MessagingService {
   constructor(private globalService: GlobalService) { }
 
   private actionSubject = new BehaviorSubject<PostMessage>(undefined);
-  receivedPostMessage$ = fromEvent(this.globalService.nativeWindow, 'message');
-  actionMessage$ = this.actionSubject.asObservable();
 
-  sendPostMessage(request) {
+  actionMessage$ = this.actionSubject.asObservable(); // Observable for child components
+  receivedPostMessage$ = fromEvent(this.globalService.nativeWindow, 'message');
+
+  /**
+   * Sends request object to parent extension through post-message
+   * @param request request object
+   */
+  sendMessagToExtension(request) {
     this.globalService.vscode.postMessage<string>(request);
   }
 
-  sendActionMessage(request) {
+  /**
+   * Sends action detail to subscribing child components
+   * @param request request object
+   */
+  sendActionDetail(request) {
     this.actionSubject.next(request);
   }
 }

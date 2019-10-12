@@ -14,11 +14,15 @@ export class ListEditComponent implements OnInit {
   constructor(private listService: ListService, private router: Router) { }
 
   ngOnInit(): void {
-    this.content = this.listService.listContent;
-    this.listIndex = this.listService.listIndex;
+    this.content = this.listService.content;
+    this.listIndex = this.listService.index;
   }
 
   backToList() {
     this.router.navigate([RouteName.path_list]);
+  }
+
+  save() {
+
   }
 }

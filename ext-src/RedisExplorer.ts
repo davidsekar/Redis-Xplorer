@@ -287,7 +287,7 @@ export class RedisXplorer {
           progress.report({ message: Message.ProgressConnectionInfo + resource.serverName, increment: 30 });
           this.treeDataProvider.getServerNodeInfo(resource.serverName).then(async result => {
             let actionDetail = new ActionDetail();
-            actionDetail.itemName = resource.serverName;
+            actionDetail.connectionName = resource.serverName;
             actionDetail.itemData = result;
             await this.redisEditor.postMessage(ActionType.ViewServerInfo, actionDetail);
           }).finally(() => {
@@ -304,7 +304,7 @@ export class RedisXplorer {
                 let listLengthPromise = this.treeDataProvider.getListLength(resource.key, resource.serverName);
                 let listItemsPromise = this.treeDataProvider.getListNodeValues(resource.key, resource.serverName);
                 Promise.all([listLengthPromise, listItemsPromise]).then(async results => {
-                  actionDetail.itemName = resource.serverName;
+                  actionDetail.connectionName = resource.serverName;
                   let listResult: RedisListResult = {
                     count: results[0],
                     items: results[1]

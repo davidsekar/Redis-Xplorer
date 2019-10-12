@@ -1,5 +1,16 @@
-<div class="content">List Index: {{listIndex}}</div>
-<mat-form-field>
-  <textarea matInput [value]="content"></textarea>
-</mat-form-field>
-<button type="button" mat-button>Save</button> <button type="button" (click)="backToList()" mat-button>Cancel</button>
+<div class="row">
+  <div class="col">
+    <div class="content">List Index: {{listIndex}}</div>
+    <mat-form-field>
+      <textarea matInput [value]="content"></textarea>
+    </mat-form-field>
+  </div>
+</div>
+<div class="row">
+  <div class="col-sm">
+    <button type="button" mat-raised-button (click)="save()">Save</button>
+  </div>
+  <div class="col-sm">
+    <button type="button" mat-raised-button (click)="backToList()">Cancel</button>
+  </div>
+</div>
