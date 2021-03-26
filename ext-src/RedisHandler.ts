@@ -11,14 +11,14 @@ class RedisHandler {
         if (times < 3) {
           return 200;
         }
-        return false;
+        return 0;
       },
       lazyConnect: true,
       maxRetriesPerRequest: 1
     };
   }
 
-  connect(redisHost?: string): Promise<Redis.Redis> {
+  connect(redisHost?: string): Promise<void> {
     return new Promise(resolve => {
       this.redisClient = new Redis(redisHost, this.redisOptions);
 
@@ -120,7 +120,7 @@ class RedisHandler {
             });
             break;
           case DataType.Hash:
-            this.redisClient.hgetall(`${key}`, (error: any, result: any[]) => {
+            this.redisClient.hgetall(`${key}`, (error, result) => {
               if (error) {
                 console.log(error);
                 reject();

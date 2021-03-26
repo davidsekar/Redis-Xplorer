@@ -20,7 +20,7 @@ export class RedisProvider implements vscode.TreeDataProvider<Entry> {
 
   public refresh(profileName: string) {
     console.log('Refresh profile : ' + profileName);
-    this._onDidChangeTreeData.fire();
+    this._onDidChangeTreeData.fire({});
   }
 
   public async getServerNodeInfo(connKey: string) {

@@ -10,10 +10,12 @@ export class RedisEditor {
     private fontFamily: string;
     private helper = new Helper();
     private panelDisposed = true;
+    private extensionUri: vscode.Uri;
 
     constructor(private context: vscode.ExtensionContext) {
         const ws = vscode.workspace.getConfiguration(undefined, null);
         this.fontFamily = ws.editor.fontFamily;
+        this.extensionUri = context.extensionUri;
         this.createRedisEditor();
     }
 
@@ -99,8 +101,11 @@ export class RedisEditor {
      * @param str input HTML string
      */
     private processHtml(basePath: string, str: string) {
-        str = str.replace(/src="/ig, 'src="vscode-resource:' + basePath + '\\');
-        str = str.replace(/"stylesheet" href="/ig, 'href="vscode-resource:' + basePath + '\\');
+        let pathOnDisk = vscode.Uri.joinPath(this.extensionUri, 'ngsrc', 'dist', 'rediseditor');
+        let resouceUri = this.panel.webview.asWebviewUri(pathOnDisk);
+
+        str = str.replace(/src="/ig, 'src="' + resouceUri + '\\');
+        str = str.replace(/"stylesheet" href="/ig, 'href="' + resouceUri + '\\');
         return str;
     }
 }
