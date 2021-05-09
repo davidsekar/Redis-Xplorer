@@ -236,7 +236,7 @@
   },
   "dependencies": {
     "ioredis": "^4.11.2",
-    "lodash": "^4.17.19"
+    "lodash": "^4.17.21"
   },
   "repository": {
     "type": "git",
