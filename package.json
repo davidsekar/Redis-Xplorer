@@ -232,7 +232,7 @@
     "typescript": "^3.5.3",
     "vscode-test": "^1.2.0",
     "webpack": "^4.39.3",
-    "webpack-cli": "^3.3.7"
+    "webpack-cli": "^3.3.12"
   },
   "dependencies": {
     "ioredis": "^4.11.2",
